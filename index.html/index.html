@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -10,1138 +10,555 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/2.12.0/tsparticles.bundle.min.js"></script>
   <style>
     :root {
-      --bg: #050010;
-      --text: #ffffff;
-      --accent: #00ffea;
-      --accent2: #ff00aa;
-      --accent3: #bf00ff;
-      --card: rgba(10, 5, 30, 0.85);
-      --glass: rgba(255,255,255,0.06);
-      --glow: 0 0 40px rgba(0,255,234,0.7);
-      --hot: #ff4500;
-      --legend: #ffd700;
-      --border: rgba(0,255,234,0.2);
+      --bg:#050010;--text:#fff;--accent:#00ffea;--accent2:#ff00aa;--accent3:#bf00ff;
+      --card:rgba(10,5,30,0.88);--glow:0 0 40px rgba(0,255,234,0.7);
+      --hot:#ff4500;--legend:#ffd700;--border:rgba(0,255,234,0.2);
     }
-    [data-theme="light"] {
-      --bg: #e8f0fe;
-      --text: #0a0a1e;
-      --accent: #0055cc;
-      --accent2: #cc0077;
-      --accent3: #7700cc;
-      --card: rgba(255,255,255,0.88);
-      --glass: rgba(0,0,0,0.06);
-      --glow: 0 0 30px rgba(0,85,204,0.4);
-      --border: rgba(0,85,204,0.2);
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;cursor:none;}
 
-    html { scroll-behavior: smooth; }
+    /* CURSOR */
+    #cursor{position:fixed;width:14px;height:14px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);box-shadow:0 0 15px var(--accent),0 0 30px var(--accent2);mix-blend-mode:screen;transition:transform .05s;}
+    #cursor-trail{position:fixed;width:36px;height:36px;border:1.5px solid var(--accent2);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:left .12s ease-out,top .12s ease-out;box-shadow:0 0 12px var(--accent2);}
 
-    body {
-      font-family: 'Rajdhani', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      transition: background 0.5s, color 0.5s;
-      cursor: none;
-    }
+    /* PARTICLES / SCANLINES */
+    #particles-js{position:fixed;inset:0;z-index:0;pointer-events:none;}
+    body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,234,.012) 2px,rgba(0,255,234,.012) 4px);pointer-events:none;z-index:1;}
 
-    /* ─── CUSTOM CURSOR ─── */
-    #cursor {
-      position: fixed;
-      width: 14px; height: 14px;
-      background: var(--accent);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 99999;
-      transform: translate(-50%,-50%);
-      transition: transform 0.05s;
-      box-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent2);
-      mix-blend-mode: screen;
-    }
-    #cursor-trail {
-      position: fixed;
-      width: 36px; height: 36px;
-      border: 1.5px solid var(--accent2);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 99998;
-      transform: translate(-50%,-50%);
-      transition: left 0.12s ease-out, top 0.12s ease-out;
-      box-shadow: 0 0 12px var(--accent2);
-    }
+    /* HEADER */
+    header{position:relative;z-index:10;text-align:center;padding:160px 20px 100px;}
+    .hero-badge{display:inline-block;font-size:.72rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:5px 18px;border-radius:100px;margin-bottom:22px;animation:fadeInDown .8s ease-out both;box-shadow:0 0 20px rgba(0,255,234,.3);}
+    header h1{font-family:'Orbitron',sans-serif;font-size:clamp(3.5rem,9vw,7rem);font-weight:900;letter-spacing:.04em;background:linear-gradient(135deg,var(--accent) 0%,#fff 40%,var(--accent2) 70%,var(--accent3) 100%);background-size:300% 300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:heroGrad 8s ease infinite,fadeInDown 1s ease-out .2s both;position:relative;display:inline-block;filter:drop-shadow(0 0 40px rgba(0,255,234,.5));}
+    header h1::after{content:attr(data-text);position:absolute;inset:0;background:inherit;-webkit-background-clip:text;background-clip:text;color:transparent;filter:blur(18px);opacity:.5;}
+    @keyframes heroGrad{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+    .header-sub{font-size:1.1rem;color:rgba(255,255,255,.5);letter-spacing:.12em;margin:18px 0 10px;animation:fadeInDown 1s ease-out .4s both;}
+    #serverIp{display:inline-block;font-family:'Orbitron',sans-serif;font-size:1.5rem;font-weight:700;cursor:pointer;color:var(--accent);text-shadow:0 0 20px var(--accent);border:1px solid rgba(0,255,234,.4);padding:8px 24px;border-radius:6px;margin:14px 0 28px;position:relative;overflow:hidden;transition:all .4s;animation:fadeInDown 1s ease-out .6s both;background:rgba(0,255,234,.06);}
+    #serverIp::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(0,255,234,.2),transparent);transform:translateX(-100%);animation:shimmer 3s infinite;}
+    @keyframes shimmer{100%{transform:translateX(100%)}}
+    #serverIp:hover{transform:scale(1.05);box-shadow:0 0 40px rgba(0,255,234,.5);}
+    #copyToast{display:none;margin-left:12px;color:#44ff99;font-size:.9rem;animation:popIn .3s ease;}
+    @keyframes popIn{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
 
-    /* ─── PARTICLES ─── */
-    #particles-js { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    /* BUTTONS */
+    .btn-row{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:10px;animation:fadeInDown 1s ease-out .8s both;}
+    .btn{padding:13px 30px;font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-decoration:none;color:white;border:1px solid rgba(255,255,255,.2);border-radius:6px;display:inline-block;position:relative;overflow:hidden;cursor:pointer;background:rgba(255,255,255,.05);transition:all .4s cubic-bezier(.175,.885,.32,1.275);backdrop-filter:blur(10px);}
+    .btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent),var(--accent2));opacity:0;transition:opacity .35s;z-index:0;}
+    .btn::after{content:'';position:absolute;left:-60px;top:0;bottom:0;width:50px;background:rgba(255,255,255,.25);transform:skewX(-20deg);transition:left .6s;z-index:1;}
+    .btn:hover::before{opacity:1;}.btn:hover::after{left:120%;}
+    .btn:hover{transform:translateY(-5px) scale(1.04);box-shadow:0 15px 40px rgba(0,255,234,.3);border-color:transparent;}
+    .btn span{position:relative;z-index:2;}
+    .btn-discord{background:rgba(88,101,242,.25);border-color:rgba(88,101,242,.5);}
+    .btn-discord::before{background:linear-gradient(135deg,#5865F2,#7289da);}
+    .btn-game{border-color:var(--hot);background:rgba(255,69,0,.15);animation:gameGlow 2s infinite alternate;}
+    .btn-game::before{background:linear-gradient(135deg,#ff4500,#ffaa00);}
+    @keyframes gameGlow{from{box-shadow:0 0 15px rgba(255,69,0,.4)}to{box-shadow:0 0 50px rgba(255,69,0,.9),0 0 80px rgba(255,165,0,.4)}}
+    .btn-spin{border-color:var(--legend);background:rgba(255,215,0,.1);animation:spinGlow 2s infinite alternate;}
+    .btn-spin::before{background:linear-gradient(135deg,#ffd700,#ff8800);}
+    .btn-spin:hover{color:#000;}
+    @keyframes spinGlow{from{box-shadow:0 0 15px rgba(255,215,0,.4)}to{box-shadow:0 0 60px rgba(255,215,0,1),0 0 100px rgba(255,136,0,.5)}}
+    .btn-memory{border-color:var(--accent3);background:rgba(191,0,255,.1);animation:memGlow 2s infinite alternate;}
+    .btn-memory::before{background:linear-gradient(135deg,#bf00ff,#ff00aa);}
+    @keyframes memGlow{from{box-shadow:0 0 15px rgba(191,0,255,.4)}to{box-shadow:0 0 60px rgba(191,0,255,1)}}
 
-    /* ─── SCAN LINE EFFECT ─── */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,234,0.015) 2px, rgba(0,255,234,0.015) 4px);
-      pointer-events: none;
-      z-index: 1;
-    }
+    /* LAYOUT */
+    .container{max-width:1300px;margin:0 auto;padding:0 24px;}
+    section{position:relative;z-index:10;padding:90px 0;}
 
-    /* ─── HEADER ─── */
-    header {
-      position: relative;
-      z-index: 10;
-      text-align: center;
-      padding: 160px 20px 100px;
-    }
+    /* HEADINGS */
+    h2{font-family:'Orbitron',sans-serif;text-align:center;font-size:clamp(1.6rem,4vw,2.8rem);margin-bottom:50px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:heroGrad 6s ease infinite;}
+    h2::before{content:'✨ ';}h2::after{content:' ✨';}
 
-    .hero-badge {
-      display: inline-block;
-      font-size: 0.75rem;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 5px 18px;
-      border-radius: 100px;
-      margin-bottom: 22px;
-      animation: fadeInDown 0.8s ease-out both;
-      box-shadow: 0 0 20px rgba(0,255,234,0.3);
-    }
+    /* CARDS */
+    .store-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:24px;}
+    .card{background:var(--card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:16px;padding:32px 24px;text-align:center;transition:all .5s cubic-bezier(.175,.885,.32,1.275);opacity:0;transform:translateY(50px) scale(.95);position:relative;overflow:hidden;}
+    .card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,255,234,.04),transparent 50%,rgba(255,0,170,.04));pointer-events:none;}
+    .card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .4s;}
+    .card.visible{opacity:1;transform:translateY(0) scale(1);}
+    .card:hover{transform:translateY(-14px) scale(1.03);box-shadow:0 30px 70px rgba(0,255,234,.15),0 0 40px rgba(255,0,170,.1);border-color:rgba(0,255,234,.5);}
+    .card:hover::after{opacity:1;}
+    .card h3{font-family:'Orbitron',sans-serif;font-size:1.3rem;color:var(--accent);margin-bottom:12px;text-shadow:0 0 15px rgba(0,255,234,.4);}
+    .card p{font-size:1rem;color:rgba(255,255,255,.6);line-height:1.5;}
+    .price{font-family:'Orbitron',sans-serif;font-size:1.8rem;color:var(--accent2);font-weight:700;margin:14px 0;text-shadow:0 0 20px rgba(255,0,170,.5);}
+    .free-tag{font-family:'Orbitron',sans-serif;font-size:1.5rem;color:#00ff88;font-weight:700;margin:14px 0;animation:freeGlow 2s infinite alternate;}
+    @keyframes freeGlow{from{text-shadow:0 0 10px rgba(0,255,136,.4)}to{text-shadow:0 0 30px rgba(0,255,136,1)}}
+    .badge{display:inline-block;padding:4px 14px;border-radius:100px;font-size:.8rem;font-weight:700;letter-spacing:.1em;margin:8px 0;}
+    .badge-hot{background:var(--hot);color:white;animation:hotPulse 1.5s infinite;}
+    @keyframes hotPulse{0%,100%{box-shadow:0 0 10px rgba(255,69,0,.5)}50%{box-shadow:0 0 30px rgba(255,69,0,1)}}
+    .badge-legend{background:var(--legend);color:#000;animation:legendPulse 2s infinite;}
+    @keyframes legendPulse{0%,100%{box-shadow:0 0 15px rgba(255,215,0,.5)}50%{box-shadow:0 0 40px rgba(255,215,0,1)}}
+    .icon{font-size:3.8rem;margin-bottom:16px;display:block;animation:floatIcon 3s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(0,255,234,.4));}
+    @keyframes floatIcon{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
 
-    header h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(3.5rem, 9vw, 7rem);
-      font-weight: 900;
-      letter-spacing: 0.04em;
-      background: linear-gradient(135deg, var(--accent) 0%, #fff 40%, var(--accent2) 70%, var(--accent3) 100%);
-      background-size: 300% 300%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: heroGrad 8s ease infinite, fadeInDown 1s ease-out 0.2s both;
-      position: relative;
-      display: inline-block;
-      filter: drop-shadow(0 0 40px rgba(0,255,234,0.5));
-    }
+    /* SLIDER */
+    .slider-container{position:relative;max-width:1000px;margin:0 auto 50px;overflow:hidden;border-radius:16px;box-shadow:var(--glow);border:1px solid var(--border);}
+    .slider{display:flex;transition:transform .9s cubic-bezier(.68,-.55,.265,1.55);}
+    .slide{min-width:100%;height:320px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;color:white;position:relative;}
+    .slide::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.6),rgba(0,0,40,.4));}
+    .slide-text{text-align:center;padding:24px 36px;background:rgba(0,0,0,.55);border:1px solid rgba(0,255,234,.3);border-radius:12px;max-width:80%;position:relative;z-index:1;backdrop-filter:blur(8px);font-family:'Orbitron',sans-serif;font-size:1.3rem;}
+    .slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.6);color:white;border:1px solid rgba(0,255,234,.3);font-size:2.4rem;width:50px;height:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;transition:all .3s;backdrop-filter:blur(10px);}
+    .slider-btn:hover{background:rgba(0,255,234,.3);transform:translateY(-50%) scale(1.15);}
+    .prev{left:18px}.next{right:18px}
+    .slider-dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:5;}
+    .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:all .3s;}
+    .dot.active{background:var(--accent);box-shadow:0 0 10px var(--accent);width:24px;border-radius:4px;}
 
-    header h1::after {
-      content: attr(data-text);
-      position: absolute;
-      inset: 0;
-      background: inherit;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      filter: blur(18px);
-      opacity: 0.5;
-    }
+    /* FOOTER */
+    footer{position:relative;z-index:10;text-align:center;padding:50px 20px;opacity:.6;font-size:.9rem;border-top:1px solid var(--border);}
+    footer::after{content:' ❤️ Built by jano';}
 
-    @keyframes heroGrad {
-      0%,100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
+    @keyframes fadeInDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
 
-    .header-sub {
-      font-size: 1.15rem;
-      color: rgba(255,255,255,0.55);
-      letter-spacing: 0.12em;
-      margin: 18px 0 10px;
-      animation: fadeInDown 1s ease-out 0.4s both;
-    }
+    /* ════ GAMES HUB ════ */
+    .games-hub{position:relative;z-index:10;padding:70px 0;text-align:center;}
+    .games-hub-sub{color:rgba(255,255,255,.4);font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:40px;margin-top:-30px;}
+    .games-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;max-width:900px;margin:0 auto;}
+    .game-card{background:var(--card);border-radius:16px;padding:30px 24px;width:260px;text-align:center;cursor:pointer;transition:all .4s;position:relative;overflow:hidden;}
+    .game-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .4s;}
+    .game-card.g-whack{border:1px solid rgba(255,69,0,.4);}
+    .game-card.g-whack::before{background:radial-gradient(circle at 50% 50%,rgba(255,69,0,.15),transparent 70%);}
+    .game-card.g-whack:hover{box-shadow:0 20px 60px rgba(255,69,0,.3);border-color:var(--hot);}
+    .game-card.g-spin{border:1px solid rgba(255,215,0,.4);}
+    .game-card.g-spin::before{background:radial-gradient(circle at 50% 50%,rgba(255,215,0,.15),transparent 70%);}
+    .game-card.g-spin:hover{box-shadow:0 20px 60px rgba(255,215,0,.3);border-color:var(--legend);}
+    .game-card.g-memory{border:1px solid rgba(191,0,255,.4);}
+    .game-card.g-memory::before{background:radial-gradient(circle at 50% 50%,rgba(191,0,255,.15),transparent 70%);}
+    .game-card.g-memory:hover{box-shadow:0 20px 60px rgba(191,0,255,.3);border-color:var(--accent3);}
+    .game-card:hover{transform:translateY(-10px) scale(1.04);}
+    .game-card:hover::before{opacity:1;}
+    .game-card .gc-icon{font-size:3.5rem;display:block;margin-bottom:12px;animation:floatIcon 3s ease-in-out infinite;}
+    .game-card h3{font-family:'Orbitron',sans-serif;font-size:1rem;margin-bottom:8px;}
+    .g-whack h3{color:var(--hot)}.g-spin h3{color:var(--legend)}.g-memory h3{color:var(--accent3)}
+    .game-card p{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:16px;}
+    .prize-tag{display:inline-block;padding:3px 12px;border-radius:100px;font-size:.72rem;font-weight:700;letter-spacing:.1em;background:linear-gradient(135deg,var(--legend),#ff8800);color:#000;animation:legendPulse 2s infinite;margin-bottom:12px;}
 
-    #serverIp {
-      display: inline-block;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 700;
-      cursor: pointer;
-      color: var(--accent);
-      text-shadow: 0 0 20px var(--accent);
-      border: 1px solid rgba(0,255,234,0.4);
-      padding: 8px 24px;
-      border-radius: 6px;
-      margin: 14px 0 28px;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s;
-      animation: fadeInDown 1s ease-out 0.6s both;
-      background: rgba(0,255,234,0.06);
-    }
-    #serverIp::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(0,255,234,0.2), transparent);
-      transform: translateX(-100%);
-      animation: shimmer 3s infinite;
-    }
-    @keyframes shimmer {
-      100% { transform: translateX(100%); }
-    }
-    #serverIp:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(0,255,234,0.5); }
+    /* ════ MODALS ════ */
+    .modal{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.9);backdrop-filter:blur(10px);align-items:center;justify-content:center;}
+    .modal.open{display:flex;animation:mFadeIn .35s ease;}
+    @keyframes mFadeIn{from{opacity:0}to{opacity:1}}
+    .modal-box{background:#06001a;border-radius:20px;padding:36px 38px;text-align:center;max-width:520px;width:95%;position:relative;animation:boxIn .45s cubic-bezier(.175,.885,.32,1.275);}
+    .modal-box.m-whack{border:1px solid rgba(255,69,0,.5);box-shadow:0 0 80px rgba(255,69,0,.2);}
+    .modal-box.m-spin{border:1px solid rgba(255,215,0,.5);box-shadow:0 0 80px rgba(255,215,0,.2);}
+    .modal-box.m-memory{border:1px solid rgba(191,0,255,.5);box-shadow:0 0 80px rgba(191,0,255,.2);}
+    @keyframes boxIn{from{transform:scale(.6) translateY(40px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+    .modal-title{font-family:'Orbitron',sans-serif;font-size:1.5rem;margin-bottom:6px;}
+    .m-whack .modal-title{color:var(--hot);text-shadow:0 0 20px rgba(255,69,0,.6);}
+    .m-spin .modal-title{color:var(--legend);text-shadow:0 0 20px rgba(255,215,0,.6);}
+    .m-memory .modal-title{color:var(--accent3);text-shadow:0 0 20px rgba(191,0,255,.6);}
+    .modal-sub{color:rgba(255,255,255,.4);font-size:.82rem;letter-spacing:.1em;margin-bottom:16px;}
+    .close-btn{position:absolute;top:14px;right:18px;background:none;border:none;color:rgba(255,255,255,.35);font-size:1.6rem;cursor:pointer;transition:color .2s;line-height:1;}
+    .close-btn:hover{color:var(--accent2);}
 
-    #copyToast {
-      display: none;
-      margin-left: 12px;
-      color: #44ff99;
-      font-size: 0.9rem;
-      animation: popIn 0.3s ease;
-    }
-    @keyframes popIn {
-      0% { transform: scale(0.5); opacity: 0; }
-      70% { transform: scale(1.2); }
-      100% { transform: scale(1); opacity: 1; }
-    }
+    /* HUD */
+    .game-hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-family:'Orbitron',sans-serif;font-size:.8rem;}
+    .game-hud .stat{color:rgba(255,255,255,.5);}
+    .game-hud .val{font-size:1.2rem;font-weight:700;}
+    .m-whack .val{color:var(--hot)}.m-spin .val{color:var(--legend)}.m-memory .val{color:var(--accent3)}
+    #timer-bar-wrap{height:4px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+    #timer-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;transition:width .1s linear;}
 
-    /* ─── BUTTONS ─── */
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 14px;
-      margin-top: 10px;
-      animation: fadeInDown 1s ease-out 0.8s both;
-    }
+    /* WHACK GRID */
+    #game-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0;}
+    .hole{background:rgba(0,255,234,.06);border:1px solid rgba(0,255,234,.15);border-radius:10px;height:70px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:background .2s;user-select:none;}
+    .hole:hover{background:rgba(0,255,234,.1);}
+    .hole .mob{position:absolute;bottom:-100%;transition:bottom .22s cubic-bezier(.34,1.56,.64,1);font-size:2rem;line-height:1;}
+    .hole.active .mob{bottom:8px;}
+    .hole.whacked{background:rgba(255,50,50,.2);animation:whackFlash .3s ease;}
+    .hole.whacked .mob{bottom:-100%;}
+    @keyframes whackFlash{0%{transform:scale(1.2)}100%{transform:scale(1)}}
 
-    .btn {
-      padding: 13px 30px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-decoration: none;
-      color: white;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 6px;
-      display: inline-block;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      background: rgba(255,255,255,0.05);
-      transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
-      backdrop-filter: blur(10px);
-    }
-    .btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      opacity: 0;
-      transition: opacity 0.35s;
-      z-index: 0;
-    }
-    .btn::after {
-      content: '';
-      position: absolute;
-      left: -60px; top: 0; bottom: 0;
-      width: 50px;
-      background: rgba(255,255,255,0.25);
-      transform: skewX(-20deg);
-      transition: left 0.6s;
-      z-index: 1;
-    }
-    .btn:hover::before { opacity: 1; }
-    .btn:hover::after { left: 120%; }
-    .btn:hover { transform: translateY(-5px) scale(1.04); box-shadow: 0 15px 40px rgba(0,255,234,0.3); border-color: transparent; }
-    .btn span { position: relative; z-index: 2; }
+    /* SPIN WHEEL */
+    #wheel-wrap{position:relative;width:280px;height:280px;margin:16px auto;}
+    #wheel-canvas{border-radius:50%;box-shadow:0 0 40px rgba(255,215,0,.4);cursor:pointer;display:block;}
+    #wheel-pointer{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:28px solid #fff;filter:drop-shadow(0 0 8px rgba(255,215,0,1));z-index:5;}
+    #spin-result{margin-top:14px;min-height:50px;}
+    .rank-reveal{animation:rankReveal .6s cubic-bezier(.175,.885,.32,1.275);}
+    @keyframes rankReveal{0%{transform:scale(0);opacity:0}60%{transform:scale(1.3)}100%{transform:scale(1);opacity:1}}
 
-    .btn-discord { background: rgba(88,101,242,0.3); border-color: rgba(88,101,242,0.5); }
-    .btn-discord::before { background: linear-gradient(135deg, #5865F2, #7289da); }
+    /* MEMORY */
+    #memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:14px 0;}
+    .mem-card{height:66px;border-radius:10px;background:rgba(191,0,255,.1);border:1px solid rgba(191,0,255,.3);display:flex;align-items:center;justify-content:center;font-size:1.8rem;cursor:pointer;transition:all .3s;user-select:none;position:relative;}
+    .mem-card .mem-front{display:none;}
+    .mem-card .mem-back{display:flex;align-items:center;justify-content:center;}
+    .mem-card.flipped .mem-front{display:flex;align-items:center;justify-content:center;}
+    .mem-card.flipped .mem-back{display:none;}
+    .mem-card.flipped{background:rgba(191,0,255,.2);border-color:var(--accent3);box-shadow:0 0 20px rgba(191,0,255,.4);}
+    .mem-card.matched{background:rgba(0,255,100,.15);border-color:#00ff88;box-shadow:0 0 20px rgba(0,255,100,.4);animation:matchPop .4s ease;pointer-events:none;}
+    @keyframes matchPop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+    .mem-card:hover:not(.matched):not(.flipped){background:rgba(191,0,255,.18);transform:scale(1.05);}
+    #mem-moves{font-family:'Orbitron',sans-serif;font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:4px;}
 
-    .btn-game {
-      background: linear-gradient(135deg, rgba(255,69,0,0.5), rgba(255,165,0,0.5));
-      border-color: var(--hot);
-      animation: gameButtonGlow 2s infinite alternate;
-    }
-    .btn-game::before { background: linear-gradient(135deg, #ff4500, #ffaa00); }
-    @keyframes gameButtonGlow {
-      from { box-shadow: 0 0 15px rgba(255,69,0,0.4); }
-      to   { box-shadow: 0 0 50px rgba(255,69,0,0.9), 0 0 80px rgba(255,165,0,0.4); }
-    }
-
-    /* ─── THEME TOGGLE ─── */
-    .theme-toggle {
-      position: fixed;
-      top: 20px; right: 20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      width: 52px; height: 52px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      font-size: 1.7rem;
-      box-shadow: var(--glow);
-      z-index: 1000;
-      transition: all 0.4s;
-      animation: orbitPulse 4s infinite;
-    }
-    @keyframes orbitPulse {
-      0%,100% { box-shadow: 0 0 20px rgba(0,255,234,0.4); }
-      50% { box-shadow: 0 0 50px rgba(0,255,234,0.9), 0 0 80px rgba(255,0,170,0.4); }
-    }
-    .theme-toggle:hover { transform: rotate(20deg) scale(1.15); }
-
-    /* ─── LAYOUT ─── */
-    .container { max-width: 1300px; margin: 0 auto; padding: 0 24px; }
-    section { position: relative; z-index: 10; padding: 90px 0; }
-
-    /* ─── SECTION DIVIDER ─── */
-    .divider {
-      position: relative;
-      z-index: 10;
-      text-align: center;
-      padding: 10px 0;
-    }
-    .divider svg { width: 100%; max-width: 800px; }
-
-    /* ─── HEADINGS ─── */
-    h2 {
-      font-family: 'Orbitron', sans-serif;
-      text-align: center;
-      font-size: clamp(1.8rem, 4vw, 3rem);
-      margin-bottom: 50px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
-      background-size: 200%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: heroGrad 6s ease infinite;
-      position: relative;
-    }
-    h2::before { content: '✨ '; }
-    h2::after {
-      content: ' ✨';
-      display: inline;
-    }
-    h2 .underline-bar {
-      display: block;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
-      margin: 10px auto 0;
-      width: 60%;
-      animation: pulseBar 3s ease-in-out infinite;
-    }
-    @keyframes pulseBar {
-      0%,100% { opacity: 0.4; width: 40%; }
-      50% { opacity: 1; width: 70%; }
-    }
-
-    /* ─── CARDS ─── */
-    .store-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-    }
-
-    .card {
-      background: var(--card);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px 24px;
-      text-align: center;
-      transition: all 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
-      opacity: 0;
-      transform: translateY(50px) scale(0.95);
-      position: relative;
-      overflow: hidden;
-    }
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(0,255,234,0.05), transparent 50%, rgba(255,0,170,0.05));
-      pointer-events: none;
-    }
-    .card::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0;
-      transition: opacity 0.4s;
-    }
-    .card.visible {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.175,0.885,0.32,1.275);
-    }
-    .card:hover {
-      transform: translateY(-14px) scale(1.03);
-      box-shadow: 0 30px 70px rgba(0,255,234,0.2), 0 0 40px rgba(255,0,170,0.15);
-      border-color: rgba(0,255,234,0.5);
-    }
-    .card:hover::after { opacity: 1; }
-
-    .card h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.4rem;
-      color: var(--accent);
-      margin-bottom: 12px;
-      text-shadow: 0 0 15px rgba(0,255,234,0.5);
-    }
-    .card p { font-size: 1rem; color: rgba(255,255,255,0.65); line-height: 1.5; }
-    .price {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.8rem;
-      color: var(--accent2);
-      font-weight: 700;
-      margin: 14px 0;
-      text-shadow: 0 0 20px rgba(255,0,170,0.5);
-    }
-    .free-tag {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.6rem;
-      color: #00ff88;
-      font-weight: 700;
-      margin: 14px 0;
-      text-shadow: 0 0 20px rgba(0,255,136,0.6);
-      animation: freeGlow 2s infinite alternate;
-    }
-    @keyframes freeGlow {
-      from { text-shadow: 0 0 10px rgba(0,255,136,0.4); }
-      to { text-shadow: 0 0 30px rgba(0,255,136,1); }
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 4px 14px;
-      border-radius: 100px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      margin: 8px 0;
-    }
-    .badge-hot { background: var(--hot); color: white; animation: hotPulse 1.5s infinite; }
-    @keyframes hotPulse {
-      0%,100% { box-shadow: 0 0 10px rgba(255,69,0,0.5); }
-      50% { box-shadow: 0 0 30px rgba(255,69,0,1); }
-    }
-    .badge-legend { background: var(--legend); color: #000; animation: legendSpin 3s linear infinite; }
-    @keyframes legendSpin {
-      0%,100% { box-shadow: 0 0 15px rgba(255,215,0,0.5); }
-      50% { box-shadow: 0 0 40px rgba(255,215,0,1); }
-    }
-
-    .icon {
-      font-size: 4rem;
-      margin-bottom: 16px;
-      display: block;
-      animation: floatIcon 3s ease-in-out infinite;
-      filter: drop-shadow(0 0 12px rgba(0,255,234,0.4));
-    }
-    @keyframes floatIcon {
-      0%,100% { transform: translateY(0) rotate(-2deg); }
-      50% { transform: translateY(-12px) rotate(2deg); }
-    }
-
-    /* ─── SLIDER ─── */
-    .slider-container {
-      position: relative;
-      max-width: 1000px;
-      margin: 0 auto 50px;
-      overflow: hidden;
-      border-radius: 16px;
-      box-shadow: var(--glow);
-      border: 1px solid var(--border);
-    }
-    .slider { display: flex; transition: transform 0.9s cubic-bezier(0.68,-0.55,0.265,1.55); }
-    .slide {
-      min-width: 100%;
-      height: 340px;
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 2rem;
-      text-shadow: 0 0 15px black;
-      overflow: hidden;
-      position: relative;
-    }
-    .slide::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,40,0.4));
-    }
-    .slide-text {
-      text-align: center;
-      padding: 28px 40px;
-      background: rgba(0,0,0,0.55);
-      border: 1px solid rgba(0,255,234,0.3);
-      border-radius: 12px;
-      max-width: 80%;
-      position: relative;
-      z-index: 1;
-      backdrop-filter: blur(8px);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.4rem;
-    }
-    .slider-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0,0,0,0.6);
-      color: white;
-      border: 1px solid rgba(0,255,234,0.3);
-      font-size: 2.5rem;
-      width: 52px; height: 52px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      border-radius: 50%;
-      transition: all 0.3s;
-      backdrop-filter: blur(10px);
-    }
-    .slider-btn:hover { background: rgba(0,255,234,0.3); transform: translateY(-50%) scale(1.15); }
-    .prev { left: 18px; }
-    .next { right: 18px; }
-    .slider-dots {
-      position: absolute;
-      bottom: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-      z-index: 5;
-    }
-    .dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.35);
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .dot.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); width: 24px; border-radius: 4px; }
-
-    /* ─── FOOTER ─── */
-    footer {
-      position: relative;
-      z-index: 10;
-      text-align: center;
-      padding: 50px 20px;
-      opacity: 0.7;
-      font-size: 1rem;
-      border-top: 1px solid var(--border);
-    }
-    footer::after { content: ' ❤️ Built by jano'; }
-
-    /* ─── ANIMATIONS ─── */
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ─── MINI-GAME MODAL ─── */
-    #game-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
-      align-items: center;
-      justify-content: center;
-    }
-    #game-modal.open { display: flex; animation: modalFadeIn 0.4s ease; }
-    @keyframes modalFadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .game-box {
-      background: #08001a;
-      border: 1px solid var(--accent);
-      border-radius: 20px;
-      padding: 36px 40px;
-      text-align: center;
-      max-width: 500px;
-      width: 95%;
-      box-shadow: 0 0 80px rgba(0,255,234,0.3), 0 0 40px rgba(191,0,255,0.2);
-      animation: gameBoxIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
-      position: relative;
-    }
-    @keyframes gameBoxIn {
-      from { transform: scale(0.6) translateY(40px); opacity: 0; }
-      to { transform: scale(1) translateY(0); opacity: 1; }
-    }
-
-    .game-box h2 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.6rem;
-      margin-bottom: 6px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .game-box h2::before, .game-box h2::after { content: none; }
-    .game-box h2 .underline-bar { display: none; }
-    #game-subtitle {
-      color: rgba(255,255,255,0.5);
-      font-size: 0.9rem;
-      letter-spacing: 0.1em;
-      margin-bottom: 20px;
-    }
-
-    /* WHACK-A-CREEPER GAME */
-    #game-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin: 20px 0;
-    }
-    .hole {
-      background: rgba(0,255,234,0.07);
-      border: 1px solid rgba(0,255,234,0.2);
-      border-radius: 12px;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.2rem;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: background 0.2s;
-      user-select: none;
-    }
-    .hole:hover { background: rgba(0,255,234,0.12); }
-    .hole .mob {
-      position: absolute;
-      bottom: -100%;
-      transition: bottom 0.25s cubic-bezier(0.34,1.56,0.64,1);
-      font-size: 2.2rem;
-      line-height: 1;
-      filter: drop-shadow(0 0 8px rgba(0,255,100,0.7));
-    }
-    .hole.active .mob { bottom: 8px; }
-    .hole.whacked .mob { bottom: -100%; filter: drop-shadow(0 0 20px red); }
-    .hole.whacked { background: rgba(255,50,50,0.2); animation: whackFlash 0.3s ease; }
-    @keyframes whackFlash {
-      0% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-
-    .game-hud {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.85rem;
-    }
-    .game-hud .stat { color: rgba(255,255,255,0.6); }
-    .game-hud .val { color: var(--accent); font-size: 1.2rem; font-weight: 700; }
-    #timer-bar-wrap {
-      height: 5px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-    #timer-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      border-radius: 10px;
-      transition: width 0.1s linear;
-      box-shadow: 0 0 10px var(--accent);
-    }
-
-    #game-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.8);
-      border-radius: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      backdrop-filter: blur(4px);
-    }
-    #game-overlay h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.8rem;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text; background-clip: text;
-      color: transparent;
-      margin-bottom: 10px;
-    }
-    #game-overlay p { color: rgba(255,255,255,0.6); margin-bottom: 20px; font-size: 1rem; }
-    #game-overlay .score-big {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 3rem;
-      color: var(--accent);
-      text-shadow: 0 0 30px var(--accent);
-      margin: 8px 0 20px;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 14px; right: 18px;
-      background: none;
-      border: none;
-      color: rgba(255,255,255,0.4);
-      font-size: 1.6rem;
-      cursor: pointer;
-      transition: color 0.2s;
-      z-index: 10;
-      line-height: 1;
-    }
-    .close-btn:hover { color: var(--accent2); }
+    /* GAME OVERLAY */
+    .game-overlay{position:absolute;inset:0;background:rgba(0,0,0,.87);border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(6px);padding:20px;}
+    .game-overlay h3{font-family:'Orbitron',sans-serif;font-size:1.5rem;margin-bottom:8px;}
+    .m-whack .game-overlay h3{color:var(--hot);text-shadow:0 0 20px rgba(255,69,0,.8);}
+    .m-spin .game-overlay h3{color:var(--legend);text-shadow:0 0 20px rgba(255,215,0,.8);}
+    .m-memory .game-overlay h3{color:var(--accent3);text-shadow:0 0 20px rgba(191,0,255,.8);}
+    .game-overlay p{color:rgba(255,255,255,.55);margin-bottom:18px;font-size:.92rem;line-height:1.5;max-width:340px;}
+    .score-big{font-family:'Orbitron',sans-serif;font-size:3rem;color:var(--accent);text-shadow:0 0 30px var(--accent);margin:6px 0 18px;}
 
     /* SCORE POP */
-    .score-pop {
-      position: fixed;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.5rem;
-      color: #44ff88;
-      font-weight: 700;
-      pointer-events: none;
-      z-index: 99999;
-      animation: scoreFly 0.8s ease forwards;
-      text-shadow: 0 0 20px rgba(68,255,136,0.8);
-    }
-    @keyframes scoreFly {
-      0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-80px) scale(1.5); }
-    }
+    .score-pop{position:fixed;font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:700;pointer-events:none;z-index:99999;animation:scoreFly .8s ease forwards;}
+    @keyframes scoreFly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.5)}}
 
-    /* Responsive */
-    @media (max-width: 600px) {
-      #game-grid { grid-template-columns: repeat(3, 1fr); }
-      .hole { height: 70px; }
+    @media(max-width:600px){
+      #game-grid{grid-template-columns:repeat(3,1fr);}
+      .modal-box{padding:22px 16px;}
+      .mem-card{height:56px;font-size:1.4rem;}
     }
   </style>
 </head>
 <body>
 
-  <div id="cursor"></div>
-  <div id="cursor-trail"></div>
-  <div id="particles-js"></div>
-  <div class="theme-toggle" id="themeToggle">🌙</div>
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+<div id="particles-js"></div>
 
-  <!-- MINI GAME MODAL -->
-  <div id="game-modal">
-    <div class="game-box">
-      <button class="close-btn" onclick="closeGame()">✕</button>
-      <h2>Whack-A-Creeper! 💥</h2>
-      <p id="game-subtitle">Hit creepers before they disappear!</p>
+<!-- ══ MODAL 1: WHACK-A-CREEPER ══ -->
+<div id="modal-whack" class="modal">
+  <div class="modal-box m-whack">
+    <button class="close-btn" onclick="closeModal('whack')">✕</button>
+    <div class="modal-title">Whack-A-Creeper 💥</div>
+    <div class="modal-sub">CLICK CREEPERS • AVOID ENDERMEN</div>
+    <div class="game-hud">
+      <div><span class="stat">SCORE </span><span class="val" id="w-score">0</span></div>
+      <div><span class="stat">BEST </span><span class="val" id="w-best">0</span></div>
+      <div><span class="stat">TIME </span><span class="val" id="w-time">30</span></div>
+    </div>
+    <div id="timer-bar-wrap"><div id="timer-bar" style="width:100%"></div></div>
+    <div id="game-grid"></div>
+    <div class="game-overlay" id="whack-overlay">
+      <h3 id="whack-ov-title">WHACK-A-CREEPER!</h3>
+      <p id="whack-ov-desc">Click 🐲 creepers to score points. Avoid 👾 endermen — clicking loses 3 points!</p>
+      <div class="score-big" id="whack-final" style="display:none"></div>
+      <button class="btn btn-game" onclick="startWhack()"><span id="whack-btn-lbl">▶ START</span></button>
+    </div>
+  </div>
+</div>
 
-      <div class="game-hud">
-        <div><span class="stat">SCORE </span><span class="val" id="score-display">0</span></div>
-        <div><span class="stat">BEST </span><span class="val" id="best-display">0</span></div>
-        <div><span class="stat">TIME </span><span class="val" id="time-display">30</span></div>
+<!-- ══ MODAL 2: RANK WHEEL ══ -->
+<div id="modal-spin" class="modal">
+  <div class="modal-box m-spin">
+    <button class="close-btn" onclick="closeModal('spin')">✕</button>
+    <div class="modal-title">🎰 Free Rank Wheel!</div>
+    <div class="modal-sub">SPIN ONCE — WIN A RANDOM FREE RANK</div>
+    <div id="wheel-wrap">
+      <div id="wheel-pointer"></div>
+      <canvas id="wheel-canvas" width="280" height="280"></canvas>
+    </div>
+    <div id="spin-result"></div>
+    <button class="btn btn-spin" id="spin-btn" onclick="spinWheel()" style="margin-top:14px"><span>🎰 SPIN THE WHEEL!</span></button>
+    <p style="font-size:.72rem;color:rgba(255,255,255,.25);margin-top:10px">One spin per visit • Contact staff on Discord to claim</p>
+  </div>
+</div>
+
+<!-- ══ MODAL 3: MEMORY MATCH ══ -->
+<div id="modal-memory" class="modal">
+  <div class="modal-box m-memory">
+    <button class="close-btn" onclick="closeModal('memory')">✕</button>
+    <div class="modal-title">Memory Match 🧠</div>
+    <div class="modal-sub">MATCH ALL 8 PAIRS TO WIN</div>
+    <div id="mem-moves">Moves: <span id="mem-cnt">0</span> &nbsp;|&nbsp; Pairs: <span id="mem-pairs">0</span>/8</div>
+    <div id="memory-grid"></div>
+    <div class="game-overlay" id="memory-overlay">
+      <h3>MEMORY MATCH!</h3>
+      <p>Flip cards and find all 8 matching Minecraft mob pairs. Remember where they are!</p>
+      <button class="btn btn-memory" onclick="startMemory()"><span id="mem-btn-lbl">▶ START</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <div class="container">
+    <div class="hero-badge">⚡ OURASMP MINECRAFT SERVER ⚡</div>
+    <h1 data-text="OuraSmp">OuraSmp</h1>
+    <p class="header-sub">Ranks • Crate Keys • IP:</p>
+    <b id="serverIp" title="Click to copy">ourasmp.mcsh.io</b>
+    <span id="copyToast">Copied! 🎉</span>
+    <p style="color:rgba(255,255,255,.4);font-size:.9rem;margin-bottom:24px;">Join our Discord for purchases, applications, and more! 🔗</p>
+    <div class="btn-row">
+      <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn btn-discord"><span>Join Discord 📱</span></a>
+      <a href="#shop" class="btn"><span>View Shop 🛒</span></a>
+      <a href="#staff" class="btn"><span>Staff / Media Apply 👥</span></a>
+      <a href="#games" class="btn"><span>🎮 Mini Games</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ SHOP ══ -->
+<section id="shop" class="container">
+  <h2>Shop — Ranks &amp; Keys</h2>
+  <div class="store-grid">
+    <div class="card"><span class="icon">🦸</span><h3>Hero Rank</h3><p>Basic perks, extra homes, /nick & more! 🏠</p><div class="price">2 gel</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Contact Staff 📞</span></a></div>
+    <div class="card"><span class="icon">🔑</span><h3>Prime Crate Key</h3><p>Unlock premium crate with epic rewards! 🎁</p><div class="price">3 gel</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Contact Staff 📞</span></a></div>
+    <div class="card"><span class="icon">🦈</span><h3>Leviathan Rank</h3><p>Advanced perks, fly, particles & keys 🕊️</p><div class="price">5 gel</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Contact Staff 📞</span></a></div>
+    <div class="card"><span class="icon">🗿</span><h3>Titan Rank</h3><div class="badge badge-hot">HOT 🔥</div><p>Godly features, custom tags, priority ⚡</p><div class="price">9 gel</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Contact Staff 📞</span></a></div>
+    <div class="card"><span class="icon">✨</span><h3>Mystic Rank</h3><p>Magic trails, more keys, exclusive cosmetics 🌟</p><div class="price">11 gel</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Contact Staff 📞</span></a></div>
+    <div class="card"><span class="icon">🐍</span><h3>Cobra Rank</h3><p>Elite perks, venom effects, lifetime benefits 🐍</p><div class="price">15 gel</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Contact Staff 📞</span></a></div>
+    <div class="card"><span class="icon">🐉</span><h3>Dragon Rank</h3><div class="badge badge-legend">LEGEND 🏆</div><p>Ultimate power, dragon wings, max keys & more 🔥</p><div class="price">20 gel</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Contact Staff 📞</span></a></div>
+    <div class="card"><span class="icon">🎨</span><h3>Custom Rank</h3><p>Personalized tag, color, perks – your choice! 🖌️</p><div class="price">15 gel</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Contact Staff 📞</span></a></div>
+  </div>
+</section>
+
+<!-- ══ STAFF ══ -->
+<section id="staff" class="container">
+  <h2>Staff &amp; Media Team (FREE!)</h2>
+  <div class="slider-container">
+    <div class="slider" id="slider">
+      <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1585208798174-6cedd78e0198?w=1200')"><div class="slide-text">Become Media 🎥<br><small style="font-size:.75rem;opacity:.7">Create content & get perks!</small></div></div>
+      <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=1200')"><div class="slide-text">Media + Mod 📹🔨<br><small style="font-size:.75rem;opacity:.7">Content + moderation</small></div></div>
+      <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200')"><div class="slide-text">Sr Mod 🛡️<br><small style="font-size:.75rem;opacity:.7">Senior trusted staff</small></div></div>
+      <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=1200')"><div class="slide-text">Admin 👑<br><small style="font-size:.75rem;opacity:.7">Full server power</small></div></div>
+    </div>
+    <button class="slider-btn prev" onclick="prevSlide()">‹</button>
+    <button class="slider-btn next" onclick="nextSlide()">›</button>
+    <div class="slider-dots" id="slider-dots"></div>
+  </div>
+  <div class="store-grid">
+    <div class="card"><span class="icon">🎥</span><h3>Media</h3><p>Create videos, streams, posts – special role & recognition 📸</p><div class="free-tag">FREE 💸</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Apply / Join Media Staff 👏</span></a></div>
+    <div class="card"><span class="icon">🎥🔨</span><h3>Media + Mod</h3><p>Media perks + basic moderation tools ⚙️</p><div class="free-tag">FREE 💸</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Apply / Join Media Staff 👏</span></a></div>
+    <div class="card"><span class="icon">🛡️</span><h3>Sr Mod</h3><p>Senior Moderator – advanced commands & trust 🔒</p><div class="free-tag">FREE 💸</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Apply / Join Sr Mod 👏</span></a></div>
+    <div class="card"><span class="icon">👑</span><h3>Admin</h3><p>Full admin – manage plugins, players, server 🌐</p><div class="free-tag">FREE 💸</div><a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn"><span>Apply / Join Admin 👏</span></a></div>
+  </div>
+</section>
+
+<!-- ══ GAMES HUB ══ -->
+<section id="games" class="games-hub">
+  <div class="container">
+    <h2>Mini Games 🎮</h2>
+    <p class="games-hub-sub">play games • win prizes • have fun</p>
+    <div class="games-grid">
+      <div class="game-card g-whack" onclick="openModal('whack')">
+        <span class="gc-icon">🐲</span>
+        <h3>Whack-A-Creeper</h3>
+        <p>Hit creepers before they escape! Avoid endermen or lose points.</p>
+        <button class="btn btn-game"><span>Play Now</span></button>
       </div>
-      <div id="timer-bar-wrap"><div id="timer-bar" style="width:100%"></div></div>
-
-      <div id="game-grid">
-        <!-- holes injected by JS -->
+      <div class="game-card g-spin" onclick="openModal('spin')">
+        <span class="gc-icon">🎰</span>
+        <h3>Free Rank Wheel</h3>
+        <p>Spin the wheel to win a completely free random rank!</p>
+        <div class="prize-tag">🏆 FREE RANK INSIDE</div><br><br>
+        <button class="btn btn-spin"><span>Spin to Win!</span></button>
       </div>
-
-      <div id="game-overlay">
-        <h3 id="overlay-title">WHACK-A-CREEPER</h3>
-        <p id="overlay-desc">Click creepers to score points. Watch out for endermen — clicking them loses points!</p>
-        <div class="score-big" id="final-score" style="display:none"></div>
-        <button class="btn" onclick="startGame()"><span>▶ START GAME</span></button>
+      <div class="game-card g-memory" onclick="openModal('memory')">
+        <span class="gc-icon">🧠</span>
+        <h3>Memory Match</h3>
+        <p>Flip cards and match all Minecraft mob pairs. How fast can you go?</p>
+        <button class="btn btn-memory"><span>Play Now</span></button>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- HEADER -->
-  <header>
-    <div class="container">
-      <div class="hero-badge">⚡ OURASMP MINECRAFT SERVER ⚡</div>
-      <h1 data-text="OuraSmp">OuraSmp</h1>
-      <p class="header-sub">Ranks • Crate Keys • IP:</p>
-      <b id="serverIp" title="Click to copy">ourasmp.mcsh.io</b>
-      <span id="copyToast">Copied! 🎉</span>
-      <p style="color:rgba(255,255,255,0.5); font-size:0.9rem; margin-bottom:24px;">Join our Discord for purchases, applications, and more! 🔗</p>
+<footer>© 2026 OuraSmp • Minecraft Server • Not affiliated with Mojang/Microsoft</footer>
 
-      <div class="btn-row">
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn btn-discord"><span>Join Discord 📱</span></a>
-        <a href="#shop" class="btn"><span>View Shop 🛒</span></a>
-        <a href="#staff" class="btn"><span>Staff / Media Apply 👥</span></a>
-        <button class="btn btn-game" onclick="openGame()"><span>🎮 Play Mini-Game</span></button>
-      </div>
-    </div>
-  </header>
+<script>
+/* ─ CURSOR ─ */
+const cur=document.getElementById('cursor'),trEl=document.getElementById('cursor-trail');
+document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';trEl.style.left=e.clientX+'px';trEl.style.top=e.clientY+'px';});
+document.addEventListener('mousedown',()=>cur.style.transform='translate(-50%,-50%) scale(.6)');
+document.addEventListener('mouseup',()=>cur.style.transform='translate(-50%,-50%) scale(1)');
 
-  <!-- SHOP -->
-  <section id="shop" class="container">
-    <h2>Shop — Ranks &amp; Keys<span class="underline-bar"></span></h2>
-    <div class="store-grid">
-      <div class="card">
-        <span class="icon">🦸</span>
-        <h3>Hero Rank</h3>
-        <p>Basic perks, extra homes, /nick & more! 🏠</p>
-        <div class="price">2 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
-      </div>
-      <div class="card">
-        <span class="icon">🔑</span>
-        <h3>Prime Crate Key</h3>
-        <p>Unlock premium crate with epic rewards! 🎁</p>
-        <div class="price">3 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
-      </div>
-      <div class="card">
-        <span class="icon">🦈</span>
-        <h3>Leviathan Rank</h3>
-        <p>Advanced perks, fly, particles & keys 🕊️</p>
-        <div class="price">5 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
-      </div>
-      <div class="card">
-        <span class="icon">🗿</span>
-        <h3>Titan Rank</h3>
-        <div class="badge badge-hot">HOT 🔥</div>
-        <p>Godly features, custom tags, priority ⚡</p>
-        <div class="price">9 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
-      </div>
-      <div class="card">
-        <span class="icon">✨</span>
-        <h3>Mystic Rank</h3>
-        <p>Magic trails, more keys, exclusive cosmetics 🌟</p>
-        <div class="price">11 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
-      </div>
-      <div class="card">
-        <span class="icon">🐍</span>
-        <h3>Cobra Rank</h3>
-        <p>Elite perks, venom effects, lifetime benefits 🐍</p>
-        <div class="price">15 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
-      </div>
-      <div class="card">
-        <span class="icon">🐉</span>
-        <h3>Dragon Rank</h3>
-        <div class="badge badge-legend">LEGEND 🏆</div>
-        <p>Ultimate power, dragon wings, max keys & more 🔥</p>
-        <div class="price">20 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
-      </div>
-      <div class="card">
-        <span class="icon">🎨</span>
-        <h3>Custom Rank</h3>
-        <p>Personalized tag, color, perks – your choice! 🖌️</p>
-        <div class="price">15 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
-      </div>
-    </div>
-  </section>
+/* ─ PARTICLES ─ */
+tsParticles.load("particles-js",{background:{color:"transparent"},particles:{number:{value:50},color:{value:["#00ffea","#ff00aa","#bf00ff","#ffd700"]},shape:{type:["circle","triangle"]},opacity:{value:.45,random:true},size:{value:{min:1,max:5}},move:{enable:true,speed:1.1,direction:"none",random:true,out_mode:"bounce"},links:{enable:true,color:"#00ffea",opacity:.06,distance:120}},interactivity:{events:{onhover:{enable:true,mode:"repulse"},onclick:{enable:true,mode:"push"}},modes:{repulse:{distance:80},push:{particles_nb:3}}}});
 
-  <!-- STAFF -->
-  <section id="staff" class="container">
-    <h2>Staff &amp; Media Team (FREE!)<span class="underline-bar"></span></h2>
+/* ─ IP COPY ─ */
+document.getElementById('serverIp').addEventListener('click',()=>{navigator.clipboard.writeText('ourasmp.mcsh.io');const t=document.getElementById('copyToast');t.style.display='inline';setTimeout(()=>t.style.display='none',2500);});
 
-    <div class="slider-container">
-      <div class="slider" id="slider">
-        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1585208798174-6cedd78e0198?w=1200');">
-          <div class="slide-text">Become Media 🎥<br><small style="font-size:0.8rem;opacity:0.8">Create content & get perks!</small></div>
-        </div>
-        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=1200');">
-          <div class="slide-text">Media + Mod 📹🔨<br><small style="font-size:0.8rem;opacity:0.8">Content + moderation</small></div>
-        </div>
-        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200');">
-          <div class="slide-text">Sr Mod 🛡️<br><small style="font-size:0.8rem;opacity:0.8">Senior trusted staff</small></div>
-        </div>
-        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=1200');">
-          <div class="slide-text">Admin 👑<br><small style="font-size:0.8rem;opacity:0.8">Full server power</small></div>
-        </div>
-      </div>
-      <button class="slider-btn prev" onclick="prevSlide()">‹</button>
-      <button class="slider-btn next" onclick="nextSlide()">›</button>
-      <div class="slider-dots" id="slider-dots"></div>
-    </div>
+/* ─ SCROLL REVEAL ─ */
+const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.card:not(.visible)').forEach((c,i)=>setTimeout(()=>c.classList.add('visible'),i*110));ro.unobserve(e.target);}});},{threshold:.08});
+document.querySelectorAll('.store-grid').forEach(g=>ro.observe(g));
 
-    <div class="store-grid">
-      <div class="card">
-        <span class="icon">🎥</span>
-        <h3>Media</h3>
-        <p>Create videos, streams, posts – special role & recognition 📸</p>
-        <div class="free-tag">FREE 💸</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Apply / Join Media Staff 👏</span></a>
-      </div>
-      <div class="card">
-        <span class="icon">🎥🔨</span>
-        <h3>Media + Mod</h3>
-        <p>Media perks + basic moderation tools ⚙️</p>
-        <div class="free-tag">FREE 💸</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Apply / Join Media Staff 👏</span></a>
-      </div>
-      <div class="card">
-        <span class="icon">🛡️</span>
-        <h3>Sr Mod</h3>
-        <p>Senior Moderator – advanced commands & trust 🔒</p>
-        <div class="free-tag">FREE 💸</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Apply / Join Sr Mod 👏</span></a>
-      </div>
-      <div class="card">
-        <span class="icon">👑</span>
-        <h3>Admin</h3>
-        <p>Full admin – manage plugins, players, server 🌐</p>
-        <div class="free-tag">FREE 💸</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Apply / Join Admin 👏</span></a>
-      </div>
-    </div>
-  </section>
+/* ─ SLIDER ─ */
+let cur2=0;const sl=document.getElementById('slider'),tot=sl.children.length;
+const dc=document.getElementById('slider-dots'),dts=[];
+for(let i=0;i<tot;i++){const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>ss(i);dc.appendChild(d);dts.push(d);}
+function ss(i){cur2=(i+tot)%tot;sl.style.transform=`translateX(-${cur2*100}%)`;dts.forEach((d,idx)=>d.classList.toggle('active',idx===cur2));}
+function nextSlide(){ss(cur2+1);}function prevSlide(){ss(cur2-1);}
+setInterval(nextSlide,5000);
 
-  <footer>
-    © 2026 OuraSmp • Minecraft Server • Not affiliated with Mojang/Microsoft
-  </footer>
+/* ─ MODAL HELPERS ─ */
+function openModal(id){document.getElementById('modal-'+id).classList.add('open');}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');if(id==='whack')stopWhack();if(id==='memory'){memActive=false;}}
 
-  <script>
-    /* ─── CURSOR ─── */
-    const cursor = document.getElementById('cursor');
-    const trail = document.getElementById('cursor-trail');
-    document.addEventListener('mousemove', e => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-      trail.style.left = e.clientX + 'px';
-      trail.style.top = e.clientY + 'px';
-    });
-    document.addEventListener('mousedown', () => cursor.style.transform = 'translate(-50%,-50%) scale(0.6)');
-    document.addEventListener('mouseup', () => cursor.style.transform = 'translate(-50%,-50%) scale(1)');
+/* ══════════════════════════════
+   GAME 1: WHACK-A-CREEPER
+══════════════════════════════ */
+const MOBS=['🐲','🐲','🐲','🐲','🐲','🐲','👾','💀'],BAD=['👾','💀'];
+let wScore=0,wBest=0,wActive=false,wTime=30,wTI;
+const gg=document.getElementById('game-grid');
+for(let i=0;i<12;i++){const h=document.createElement('div');h.className='hole';const m=document.createElement('span');m.className='mob';h.appendChild(m);h.addEventListener('click',()=>whack(h,m));gg.appendChild(h);}
 
-    /* ─── THEME ─── */
-    const toggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
-    function setTheme(t) {
-      html.setAttribute('data-theme', t);
-      toggle.textContent = t === 'dark' ? '🌙' : '☀️';
-      localStorage.setItem('theme', t);
+function startWhack(){
+  wScore=0;wTime=30;wActive=true;
+  document.getElementById('w-score').textContent='0';
+  document.getElementById('w-time').textContent='30';
+  document.getElementById('timer-bar').style.width='100%';
+  document.getElementById('whack-overlay').style.display='none';
+  document.getElementById('whack-final').style.display='none';
+  document.querySelectorAll('.hole').forEach(h=>h.classList.remove('active','whacked'));
+  wTI=setInterval(()=>{wTime--;document.getElementById('w-time').textContent=wTime;document.getElementById('timer-bar').style.width=(wTime/30*100)+'%';if(wTime<=0)endWhack();},1000);
+  spawnMob();
+}
+function spawnMob(){
+  if(!wActive)return;
+  const avail=[...document.querySelectorAll('.hole')].filter(h=>!h.classList.contains('active'));
+  if(!avail.length){setTimeout(spawnMob,300);return;}
+  const h=avail[Math.floor(Math.random()*avail.length)],m=h.querySelector('.mob');
+  const tp=MOBS[Math.floor(Math.random()*MOBS.length)];
+  m.textContent=tp;m.dataset.type=tp;h.classList.add('active');
+  const stay=Math.max(550,1300-((30-wTime)*22));
+  const ht=setTimeout(()=>{h.classList.remove('active');setTimeout(spawnMob,Math.max(180,600-((30-wTime)*10)));},stay);
+  h.dataset.ht=ht;
+}
+function whack(h,m){
+  if(!wActive||!h.classList.contains('active'))return;
+  clearTimeout(parseInt(h.dataset.ht));
+  const tp=m.dataset.type;h.classList.remove('active');h.classList.add('whacked');
+  if(BAD.includes(tp)){wScore=Math.max(0,wScore-3);sPop('-3',h,'#ff4444');}
+  else{wScore++;sPop('+1',h,'#44ff88');}
+  document.getElementById('w-score').textContent=wScore;
+  setTimeout(()=>h.classList.remove('whacked'),300);
+  setTimeout(spawnMob,Math.max(120,450-((30-wTime)*8)));
+}
+function endWhack(){
+  wActive=false;clearInterval(wTI);
+  document.querySelectorAll('.hole').forEach(h=>h.classList.remove('active'));
+  if(wScore>wBest)wBest=wScore;document.getElementById('w-best').textContent=wBest;
+  document.getElementById('whack-ov-title').textContent=wScore>=15?'🏆 LEGENDARY!':wScore>=8?'⚡ NICE RUN!':'💀 GAME OVER';
+  document.getElementById('whack-ov-desc').textContent=wScore>=15?'You\'re a Minecraft beast!':wScore>=8?'Pretty good! Try again?':'The creepers got you...';
+  document.getElementById('whack-final').textContent=wScore;document.getElementById('whack-final').style.display='block';
+  document.getElementById('whack-btn-lbl').textContent='↺ PLAY AGAIN';
+  document.getElementById('whack-overlay').style.display='flex';
+}
+function stopWhack(){wActive=false;clearInterval(wTI);document.querySelectorAll('.hole').forEach(h=>h.classList.remove('active','whacked'));}
+function sPop(txt,el,col){const r=el.getBoundingClientRect(),p=document.createElement('div');p.className='score-pop';p.textContent=txt;p.style.left=(r.left+r.width/2)+'px';p.style.top=r.top+'px';p.style.color=col;document.body.appendChild(p);setTimeout(()=>p.remove(),800);}
+
+/* ══════════════════════════════
+   GAME 2: SPIN THE WHEEL (Free Rank!)
+══════════════════════════════ */
+const RANKS=[
+  {name:'Hero',emoji:'🦸',color:'#3399ff',price:'2 gel'},
+  {name:'Leviathan',emoji:'🦈',color:'#00ccaa',price:'5 gel'},
+  {name:'Titan',emoji:'🗿',color:'#ff6600',price:'9 gel'},
+  {name:'Mystic',emoji:'✨',color:'#cc44ff',price:'11 gel'},
+  {name:'Cobra',emoji:'🐍',color:'#44dd44',price:'15 gel'},
+  {name:'Dragon',emoji:'🐉',color:'#ffd700',price:'20 gel'},
+  {name:'Custom',emoji:'🎨',color:'#ff44aa',price:'15 gel'},
+  {name:'Hero',emoji:'🦸',color:'#3399ff',price:'2 gel'},
+];
+const cnv=document.getElementById('wheel-canvas'),ctx2=cnv.getContext('2d');
+const SEG=RANKS.length,ARC=2*Math.PI/SEG,CX=140,CY=140,R=132;
+let wAngle=0,wSpinning=false,wUsed=false;
+
+function drawWheel(angle){
+  ctx2.clearRect(0,0,280,280);
+  for(let i=0;i<SEG;i++){
+    const s=angle+i*ARC,e=angle+(i+1)*ARC;
+    ctx2.save();ctx2.beginPath();ctx2.moveTo(CX,CY);ctx2.arc(CX,CY,R,s,e);ctx2.closePath();
+    ctx2.fillStyle=RANKS[i].color;ctx2.fill();ctx2.strokeStyle='rgba(0,0,0,.4)';ctx2.lineWidth=1.5;ctx2.stroke();
+    ctx2.translate(CX,CY);ctx2.rotate(angle+i*ARC+ARC/2);
+    ctx2.textAlign='right';ctx2.fillStyle='#fff';ctx2.font='bold 10.5px Orbitron,sans-serif';
+    ctx2.shadowColor='rgba(0,0,0,.9)';ctx2.shadowBlur=4;
+    ctx2.fillText(RANKS[i].name,R-6,4);ctx2.font='15px serif';ctx2.fillText(RANKS[i].emoji,R+10,5);
+    ctx2.restore();
+  }
+  ctx2.save();ctx2.beginPath();ctx2.arc(CX,CY,22,0,2*Math.PI);
+  const cg=ctx2.createRadialGradient(CX,CY,2,CX,CY,22);cg.addColorStop(0,'#fff');cg.addColorStop(1,'#ffd700');
+  ctx2.fillStyle=cg;ctx2.fill();ctx2.strokeStyle='rgba(0,0,0,.3)';ctx2.lineWidth=2;ctx2.stroke();
+  ctx2.fillStyle='#000';ctx2.font='bold 11px Orbitron';ctx2.textAlign='center';ctx2.textBaseline='middle';ctx2.fillText('GO!',CX,CY);ctx2.restore();
+}
+drawWheel(0);
+
+function spinWheel(){
+  if(wSpinning||wUsed)return;
+  wSpinning=true;wUsed=true;
+  const btn=document.getElementById('spin-btn');btn.disabled=true;btn.querySelector('span').textContent='Spinning... 🌀';
+  document.getElementById('spin-result').innerHTML='';
+  const extra=(5+Math.random()*5)*2*Math.PI+Math.random()*2*Math.PI;
+  const dur=4500,start=performance.now(),startA=wAngle;
+  function animate(now){
+    const t=Math.min((now-start)/dur,1),ease=1-Math.pow(1-t,4);
+    wAngle=startA+extra*ease;drawWheel(wAngle);
+    if(t<1){requestAnimationFrame(animate);}
+    else{
+      wSpinning=false;
+      const norm=((wAngle%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+      const ptrAngle=(2*Math.PI-norm+Math.PI*1.5)%(2*Math.PI);
+      const winIdx=Math.floor(ptrAngle/ARC)%SEG;
+      showRankWin(RANKS[winIdx]);
     }
-    setTheme(localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-    toggle.addEventListener('click', () => setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+  }
+  requestAnimationFrame(animate);
+}
 
-    /* ─── PARTICLES ─── */
-    tsParticles.load("particles-js", {
-      background: { color: "transparent" },
-      particles: {
-        number: { value: 55 },
-        color: { value: ["#00ffea", "#ff00aa", "#bf00ff", "#ffd700"] },
-        shape: { type: ["circle","triangle"] },
-        opacity: { value: 0.5, random: true },
-        size: { value: { min: 1, max: 5 } },
-        move: { enable: true, speed: 1.2, direction: "none", random: true, out_mode: "bounce" },
-        links: { enable: true, color: "#00ffea", opacity: 0.07, distance: 130 }
-      },
-      interactivity: {
-        events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" } },
-        modes: { repulse: { distance: 80 }, push: { particles_nb: 3 } }
-      }
-    });
+function showRankWin(rank){
+  document.getElementById('spin-result').innerHTML=`
+    <div class="rank-reveal" style="background:${rank.color}22;border:1px solid ${rank.color};border-radius:12px;padding:14px 18px;margin-top:8px;">
+      <div style="font-size:2.8rem;margin-bottom:4px">${rank.emoji}</div>
+      <div style="font-family:Orbitron,sans-serif;font-size:1.4rem;font-weight:900;color:${rank.color};text-shadow:0 0 20px ${rank.color}">${rank.name} Rank!</div>
+      <div style="color:rgba(255,255,255,.5);font-size:.82rem;margin-top:5px">Worth ${rank.price} — yours for FREE! 🎉</div>
+      <a href="https://discord.gg/K3ETRwzV" target="_blank" class="btn btn-discord" style="margin-top:10px;display:inline-block"><span>📱 Claim on Discord!</span></a>
+    </div>`;
+  for(let i=0;i<24;i++) setTimeout(()=>confettiBurst(rank.color),i*55);
+}
+function confettiBurst(col){
+  const p=document.createElement('div');
+  p.style.cssText=`position:fixed;left:${Math.random()*100}%;top:${Math.random()*50+20}%;width:8px;height:8px;background:${col};border-radius:50%;pointer-events:none;z-index:99999;animation:scoreFly 1s ease forwards`;
+  document.body.appendChild(p);setTimeout(()=>p.remove(),1000);
+}
 
-    /* ─── IP COPY ─── */
-    document.getElementById('serverIp').addEventListener('click', () => {
-      navigator.clipboard.writeText('ourasmp.mcsh.io');
-      const t = document.getElementById('copyToast');
-      t.style.display = 'inline';
-      setTimeout(() => t.style.display = 'none', 2500);
-    });
+/* ══════════════════════════════
+   GAME 3: MEMORY MATCH
+══════════════════════════════ */
+const MEM=['🐲','🦈','🗿','✨','🐍','🐉','🦸','🔑'];
+let memFlipped=[],memMatched=0,memMoves=0,memLocked=false,memActive=false;
 
-    /* ─── SCROLL REVEAL ─── */
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach((e, i) => {
-        if (e.isIntersecting) {
-          const cards = e.target.parentElement.querySelectorAll('.card:not(.visible)');
-          cards.forEach((c, idx) => setTimeout(() => c.classList.add('visible'), idx * 120));
-          observer.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.store-grid').forEach(g => observer.observe(g));
+function buildMemGrid(){
+  const grid=document.getElementById('memory-grid');grid.innerHTML='';
+  const pairs=[...MEM,...MEM].sort(()=>Math.random()-.5);
+  pairs.forEach((ic,i)=>{
+    const c=document.createElement('div');c.className='mem-card';c.dataset.ic=ic;
+    c.innerHTML=`<span class="mem-front">${ic}</span><span class="mem-back">❓</span>`;
+    c.addEventListener('click',()=>flipMem(c));grid.appendChild(c);
+  });
+}
 
-    /* ─── SLIDER ─── */
-    let currentSlide = 0;
-    const slider = document.getElementById('slider');
-    const totalSlides = slider.children.length;
-    const dotsContainer = document.getElementById('slider-dots');
-    const dots = [];
-    for (let i = 0; i < totalSlides; i++) {
-      const d = document.createElement('div');
-      d.className = 'dot' + (i === 0 ? ' active' : '');
-      d.onclick = () => showSlide(i);
-      dotsContainer.appendChild(d);
-      dots.push(d);
-    }
-    function showSlide(i) {
-      currentSlide = (i + totalSlides) % totalSlides;
-      slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-      dots.forEach((d, idx) => d.classList.toggle('active', idx === currentSlide));
-    }
-    function nextSlide() { showSlide(currentSlide + 1); }
-    function prevSlide() { showSlide(currentSlide - 1); }
-    setInterval(nextSlide, 5000);
+function startMemory(){
+  memFlipped=[];memMatched=0;memMoves=0;memLocked=false;memActive=true;
+  document.getElementById('mem-cnt').textContent='0';document.getElementById('mem-pairs').textContent='0';
+  buildMemGrid();
+  document.getElementById('memory-overlay').style.display='none';
+  document.getElementById('mem-btn-lbl').textContent='↺ PLAY AGAIN';
+}
 
-    /* ═══════════════════════════════════════
-       WHACK-A-CREEPER MINI GAME
-    ═══════════════════════════════════════ */
-    const GAME_DURATION = 30;
-    const MOBS = ['🐲','🐲','🐲','🐲','🐲','🐲','💀','👾']; // mostly creepers, some bad ones
-    const CREEPER = '🐲';
-    const BAD = ['💀','👾'];
-    const COLS = 4;
-    const ROWS = 3;
-    const TOTAL_HOLES = COLS * ROWS;
+function flipMem(c){
+  if(!memActive||memLocked||c.classList.contains('flipped')||c.classList.contains('matched'))return;
+  c.classList.add('flipped');memFlipped.push(c);
+  if(memFlipped.length===2){memMoves++;document.getElementById('mem-cnt').textContent=memMoves;memLocked=true;setTimeout(checkMem,750);}
+}
+function checkMem(){
+  const[a,b]=memFlipped;
+  if(a.dataset.ic===b.dataset.ic){
+    a.classList.add('matched');b.classList.add('matched');memMatched++;
+    document.getElementById('mem-pairs').textContent=memMatched;
+    if(memMatched===MEM.length)setTimeout(winMem,500);
+  } else {a.classList.remove('flipped');b.classList.remove('flipped');}
+  memFlipped=[];memLocked=false;
+}
+function winMem(){
+  document.getElementById('memory-overlay').innerHTML=`
+    <h3>🧠 YOU WIN!</h3>
+    <p>All pairs matched in <strong style="color:var(--accent3)">${memMoves} moves</strong>!<br>
+    ${memMoves<=14?'🏆 Incredible memory!':memMoves<=22?'⚡ Nice work!':'Keep training that brain!'}</p>
+    <div class="score-big">${memMoves}</div>
+    <button class="btn btn-memory" onclick="startMemory()"><span>↺ PLAY AGAIN</span></button>`;
+  document.getElementById('memory-overlay').style.display='flex';
+}
 
-    let score = 0, bestScore = 0, gameActive = false;
-    let timeLeft = GAME_DURATION;
-    let timerInterval, mobInterval;
-    let activeHoles = new Set();
-
-    const gameGrid = document.getElementById('game-grid');
-    const scoreDisplay = document.getElementById('score-display');
-    const bestDisplay = document.getElementById('best-display');
-    const timeDisplay = document.getElementById('time-display');
-    const timerBar = document.getElementById('timer-bar');
-    const gameOverlay = document.getElementById('game-overlay');
-    const overlayTitle = document.getElementById('overlay-title');
-    const overlayDesc = document.getElementById('overlay-desc');
-    const finalScore = document.getElementById('final-score');
-
-    // Build grid
-    for (let i = 0; i < TOTAL_HOLES; i++) {
-      const hole = document.createElement('div');
-      hole.className = 'hole';
-      hole.dataset.index = i;
-      const mob = document.createElement('span');
-      mob.className = 'mob';
-      hole.appendChild(mob);
-      hole.addEventListener('click', () => whack(hole, mob));
-      gameGrid.appendChild(hole);
-    }
-
-    function openGame() {
-      document.getElementById('game-modal').classList.add('open');
-    }
-    function closeGame() {
-      document.getElementById('game-modal').classList.remove('open');
-      stopGame();
-    }
-
-    function startGame() {
-      score = 0;
-      timeLeft = GAME_DURATION;
-      gameActive = true;
-      activeHoles.clear();
-      scoreDisplay.textContent = '0';
-      timeDisplay.textContent = GAME_DURATION;
-      timerBar.style.width = '100%';
-      gameOverlay.style.display = 'none';
-      finalScore.style.display = 'none';
-
-      // Clear all holes
-      document.querySelectorAll('.hole').forEach(h => {
-        h.classList.remove('active','whacked');
-      });
-
-      // Timer countdown
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        timeDisplay.textContent = timeLeft;
-        timerBar.style.width = (timeLeft / GAME_DURATION * 100) + '%';
-        if (timeLeft <= 0) endGame();
-      }, 1000);
-
-      // Spawn mobs — get faster over time
-      spawnMob();
-    }
-
-    function spawnMob() {
-      if (!gameActive) return;
-      const holes = document.querySelectorAll('.hole');
-      // pick a random hole not already active
-      let available = [...holes].filter(h => !h.classList.contains('active'));
-      if (available.length === 0) { setTimeout(spawnMob, 300); return; }
-
-      const hole = available[Math.floor(Math.random() * available.length)];
-      const mob = hole.querySelector('.mob');
-      const mobType = MOBS[Math.floor(Math.random() * MOBS.length)];
-      mob.textContent = mobType;
-      mob.dataset.type = mobType;
-      hole.classList.add('active');
-
-      // How long it stays — gets shorter as time runs out
-      const stayTime = Math.max(600, 1400 - ((GAME_DURATION - timeLeft) * 20));
-
-      const hideTimer = setTimeout(() => {
-        if (hole.classList.contains('active')) {
-          hole.classList.remove('active');
-        }
-        // spawn next
-        const nextDelay = Math.max(200, 700 - ((GAME_DURATION - timeLeft) * 10));
-        setTimeout(spawnMob, nextDelay);
-      }, stayTime);
-
-      hole.dataset.hideTimer = hideTimer;
-    }
-
-    function whack(hole, mob) {
-      if (!gameActive || !hole.classList.contains('active')) return;
-      clearTimeout(parseInt(hole.dataset.hideTimer));
-      const type = mob.dataset.type;
-      hole.classList.remove('active');
-      hole.classList.add('whacked');
-
-      if (BAD.includes(type)) {
-        score = Math.max(0, score - 3);
-        spawnScorePop('-3', hole, '#ff4444');
-        navigator.vibrate && navigator.vibrate(100);
-      } else {
-        const pts = 1;
-        score += pts;
-        spawnScorePop('+1', hole, '#44ff88');
-      }
-      scoreDisplay.textContent = score;
-
-      setTimeout(() => hole.classList.remove('whacked'), 350);
-      // spawn next mob quickly
-      const nextDelay = Math.max(150, 500 - ((GAME_DURATION - timeLeft) * 8));
-      setTimeout(spawnMob, nextDelay);
-    }
-
-    function spawnScorePop(text, hole, color) {
-      const rect = hole.getBoundingClientRect();
-      const pop = document.createElement('div');
-      pop.className = 'score-pop';
-      pop.textContent = text;
-      pop.style.left = (rect.left + rect.width/2) + 'px';
-      pop.style.top = (rect.top) + 'px';
-      pop.style.color = color;
-      document.body.appendChild(pop);
-      setTimeout(() => pop.remove(), 800);
-    }
-
-    function endGame() {
-      gameActive = false;
-      clearInterval(timerInterval);
-      clearTimeout(mobInterval);
-
-      document.querySelectorAll('.hole').forEach(h => h.classList.remove('active'));
-
-      if (score > bestScore) bestScore = score;
-      bestDisplay.textContent = bestScore;
-
-      // Show overlay
-      overlayTitle.textContent = score >= 15 ? '🏆 LEGENDARY!' : score >= 8 ? '⚡ NICE RUN!' : '💀 GAME OVER';
-      overlayDesc.textContent = score >= 15 ? 'You\'re a Minecraft pro!' : score >= 8 ? 'Not bad, try to beat your score!' : 'Creepers survived... try again!';
-      finalScore.textContent = score;
-      finalScore.style.display = 'block';
-      document.querySelector('#game-overlay button span').textContent = '↺ PLAY AGAIN';
-      gameOverlay.style.display = 'flex';
-    }
-
-    function stopGame() {
-      gameActive = false;
-      clearInterval(timerInterval);
-      clearTimeout(mobInterval);
-      document.querySelectorAll('.hole').forEach(h => h.classList.remove('active','whacked'));
-    }
-  </script>
+buildMemGrid();
+</script>
 </body>
 </html>
