@@ -6,422 +6,856 @@
   <title>OuraSmp • Minecraft Server 🚀</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/2.12.0/tsparticles.bundle.min.js"></script>
-  
   <style>
     :root {
-      --bg: #0a0a15;
+      --bg: #050010;
       --text: #ffffff;
       --accent: #00ffea;
       --accent2: #ff00aa;
-      --card: rgba(20, 20, 50, 0.8);
-      --glass: rgba(255, 255, 255, 0.15);
-      --glow: 0 0 35px rgba(0, 255, 234, 0.8);
+      --accent3: #bf00ff;
+      --card: rgba(10, 5, 30, 0.85);
+      --glass: rgba(255,255,255,0.06);
+      --glow: 0 0 40px rgba(0,255,234,0.7);
       --hot: #ff4500;
       --legend: #ffd700;
-      --border: rgba(255,255,255,0.15);
+      --border: rgba(0,255,234,0.2);
     }
-
     [data-theme="light"] {
-      --bg: #f0f4f8;
-      --text: #1a1a2e;
-      --accent: #0077b6;
-      --accent2: #d00000;
-      --card: rgba(255, 255, 255, 0.9);
-      --glass: rgba(0, 0, 0, 0.08);
-      --glow: 0 0 30px rgba(0, 119, 182, 0.5);
-      --border: rgba(0,0,0,0.15);
+      --bg: #e8f0fe;
+      --text: #0a0a1e;
+      --accent: #0055cc;
+      --accent2: #cc0077;
+      --accent3: #7700cc;
+      --card: rgba(255,255,255,0.88);
+      --glass: rgba(0,0,0,0.06);
+      --glow: 0 0 30px rgba(0,85,204,0.4);
+      --border: rgba(0,85,204,0.2);
     }
-
     * { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Rajdhani', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
-      transition: all 0.5s ease;
+      transition: background 0.5s, color 0.5s;
+      cursor: none;
     }
 
-    #particles-js { position: fixed; inset: 0; z-index: -1; opacity: 0.7; pointer-events: none; }
+    /* ─── CUSTOM CURSOR ─── */
+    #cursor {
+      position: fixed;
+      width: 14px; height: 14px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%,-50%);
+      transition: transform 0.05s;
+      box-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent2);
+      mix-blend-mode: screen;
+    }
+    #cursor-trail {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--accent2);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
+      transform: translate(-50%,-50%);
+      transition: left 0.12s ease-out, top 0.12s ease-out;
+      box-shadow: 0 0 12px var(--accent2);
+    }
 
+    /* ─── PARTICLES ─── */
+    #particles-js { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ─── SCAN LINE EFFECT ─── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,234,0.015) 2px, rgba(0,255,234,0.015) 4px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ─── HEADER ─── */
     header {
+      position: relative;
+      z-index: 10;
       text-align: center;
       padding: 160px 20px 100px;
-      animation: fadeInDown 1.5s ease-out;
     }
 
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-50px); }
-      to { opacity: 1; transform: translateY(0); }
+    .hero-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 5px 18px;
+      border-radius: 100px;
+      margin-bottom: 22px;
+      animation: fadeInDown 0.8s ease-out both;
+      box-shadow: 0 0 20px rgba(0,255,234,0.3);
     }
 
     header h1 {
       font-family: 'Orbitron', sans-serif;
-      font-size: 5.5rem;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      font-size: clamp(3.5rem, 9vw, 7rem);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      background: linear-gradient(135deg, var(--accent) 0%, #fff 40%, var(--accent2) 70%, var(--accent3) 100%);
+      background-size: 300% 300%;
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      text-shadow: var(--glow);
-      animation: glowPulse 5s infinite alternate, rainbowText 10s linear infinite;
+      animation: heroGrad 8s ease infinite, fadeInDown 1s ease-out 0.2s both;
+      position: relative;
+      display: inline-block;
+      filter: drop-shadow(0 0 40px rgba(0,255,234,0.5));
     }
 
-    @keyframes rainbowText {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 200% 50%; }
+    header h1::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+      background: inherit;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: blur(18px);
+      opacity: 0.5;
     }
 
-    header h1::after { content: '🎮'; margin-left: 10px; animation: spinEmoji 3s infinite linear; }
+    @keyframes heroGrad {
+      0%,100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
 
-    @keyframes spinEmoji {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    .header-sub {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.12em;
+      margin: 18px 0 10px;
+      animation: fadeInDown 1s ease-out 0.4s both;
     }
 
     #serverIp {
-      font-size: 2.3rem;
-      cursor: pointer;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: var(--glow);
-      transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    #serverIp:hover { transform: scale(1.15) rotate(5deg); }
-
-    .theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1.8rem;
-      box-shadow: var(--glow);
-      z-index: 1000;
-      transition: all 0.3s;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-
-    .theme-toggle:hover { transform: scale(1.2); }
-
-    .btn {
-      padding: 14px 35px;
-      margin: 15px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      text-decoration: none;
-      color: white;
-      background: linear-gradient(45deg, var(--accent), var(--accent2));
-      border-radius: 50px;
-      box-shadow: var(--glow);
       display: inline-block;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--accent);
+      text-shadow: 0 0 20px var(--accent);
+      border: 1px solid rgba(0,255,234,0.4);
+      padding: 8px 24px;
+      border-radius: 6px;
+      margin: 14px 0 28px;
       position: relative;
       overflow: hidden;
+      transition: all 0.4s;
+      animation: fadeInDown 1s ease-out 0.6s both;
+      background: rgba(0,255,234,0.06);
+    }
+    #serverIp::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(0,255,234,0.2), transparent);
+      transform: translateX(-100%);
+      animation: shimmer 3s infinite;
+    }
+    @keyframes shimmer {
+      100% { transform: translateX(100%); }
+    }
+    #serverIp:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(0,255,234,0.5); }
+
+    #copyToast {
+      display: none;
+      margin-left: 12px;
+      color: #44ff99;
+      font-size: 0.9rem;
+      animation: popIn 0.3s ease;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
     }
 
+    /* ─── BUTTONS ─── */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 10px;
+      animation: fadeInDown 1s ease-out 0.8s both;
+    }
+
+    .btn {
+      padding: 13px 30px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+      backdrop-filter: blur(10px);
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.35s;
+      z-index: 0;
+    }
     .btn::after {
       content: '';
       position: absolute;
-      top: -50%; left: -50%; width: 200%; height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-      opacity: 0;
-      transition: opacity 0.5s;
+      left: -60px; top: 0; bottom: 0;
+      width: 50px;
+      background: rgba(255,255,255,0.25);
+      transform: skewX(-20deg);
+      transition: left 0.6s;
+      z-index: 1;
+    }
+    .btn:hover::before { opacity: 1; }
+    .btn:hover::after { left: 120%; }
+    .btn:hover { transform: translateY(-5px) scale(1.04); box-shadow: 0 15px 40px rgba(0,255,234,0.3); border-color: transparent; }
+    .btn span { position: relative; z-index: 2; }
+
+    .btn-discord { background: rgba(88,101,242,0.3); border-color: rgba(88,101,242,0.5); }
+    .btn-discord::before { background: linear-gradient(135deg, #5865F2, #7289da); }
+
+    .btn-game {
+      background: linear-gradient(135deg, rgba(255,69,0,0.5), rgba(255,165,0,0.5));
+      border-color: var(--hot);
+      animation: gameButtonGlow 2s infinite alternate;
+    }
+    .btn-game::before { background: linear-gradient(135deg, #ff4500, #ffaa00); }
+    @keyframes gameButtonGlow {
+      from { box-shadow: 0 0 15px rgba(255,69,0,0.4); }
+      to   { box-shadow: 0 0 50px rgba(255,69,0,0.9), 0 0 80px rgba(255,165,0,0.4); }
     }
 
-    .btn:hover::after { opacity: 1; }
-    .btn:hover { transform: translateY(-6px) scale(1.05); }
-
-    .container { max-width: 1300px; margin: 0 auto; padding: 0 20px; }
-
-    section { padding: 80px 0; animation: fadeIn 1.5s ease-in; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    /* ─── THEME TOGGLE ─── */
+    .theme-toggle {
+      position: fixed;
+      top: 20px; right: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 52px; height: 52px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1.7rem;
+      box-shadow: var(--glow);
+      z-index: 1000;
+      transition: all 0.4s;
+      animation: orbitPulse 4s infinite;
     }
+    @keyframes orbitPulse {
+      0%,100% { box-shadow: 0 0 20px rgba(0,255,234,0.4); }
+      50% { box-shadow: 0 0 50px rgba(0,255,234,0.9), 0 0 80px rgba(255,0,170,0.4); }
+    }
+    .theme-toggle:hover { transform: rotate(20deg) scale(1.15); }
 
-    h2 {
+    /* ─── LAYOUT ─── */
+    .container { max-width: 1300px; margin: 0 auto; padding: 0 24px; }
+    section { position: relative; z-index: 10; padding: 90px 0; }
+
+    /* ─── SECTION DIVIDER ─── */
+    .divider {
+      position: relative;
+      z-index: 10;
       text-align: center;
-      font-size: 3.5rem;
-      margin-bottom: 40px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      padding: 10px 0;
+    }
+    .divider svg { width: 100%; max-width: 800px; }
+
+    /* ─── HEADINGS ─── */
+    h2 {
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      margin-bottom: 50px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+      background-size: 200%;
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      text-shadow: var(--glow);
-      animation: bounceIn 1.5s ease-out;
+      animation: heroGrad 6s ease infinite;
+      position: relative;
     }
-
-    @keyframes bounceIn {
-      0% { transform: scale(0.5); opacity: 0; }
-      50% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(1); }
-    }
-
     h2::before { content: '✨ '; }
-    h2::after { content: ' ✨'; }
+    h2::after {
+      content: ' ✨';
+      display: inline;
+    }
+    h2 .underline-bar {
+      display: block;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+      margin: 10px auto 0;
+      width: 60%;
+      animation: pulseBar 3s ease-in-out infinite;
+    }
+    @keyframes pulseBar {
+      0%,100% { opacity: 0.4; width: 40%; }
+      50% { opacity: 1; width: 70%; }
+    }
 
-    /* Slider */
+    /* ─── CARDS ─── */
+    .store-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+      opacity: 0;
+      transform: translateY(50px) scale(0.95);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,255,234,0.05), transparent 50%, rgba(255,0,170,0.05));
+      pointer-events: none;
+    }
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .card:hover {
+      transform: translateY(-14px) scale(1.03);
+      box-shadow: 0 30px 70px rgba(0,255,234,0.2), 0 0 40px rgba(255,0,170,0.15);
+      border-color: rgba(0,255,234,0.5);
+    }
+    .card:hover::after { opacity: 1; }
+
+    .card h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.4rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-shadow: 0 0 15px rgba(0,255,234,0.5);
+    }
+    .card p { font-size: 1rem; color: rgba(255,255,255,0.65); line-height: 1.5; }
+    .price {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      color: var(--accent2);
+      font-weight: 700;
+      margin: 14px 0;
+      text-shadow: 0 0 20px rgba(255,0,170,0.5);
+    }
+    .free-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      color: #00ff88;
+      font-weight: 700;
+      margin: 14px 0;
+      text-shadow: 0 0 20px rgba(0,255,136,0.6);
+      animation: freeGlow 2s infinite alternate;
+    }
+    @keyframes freeGlow {
+      from { text-shadow: 0 0 10px rgba(0,255,136,0.4); }
+      to { text-shadow: 0 0 30px rgba(0,255,136,1); }
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      margin: 8px 0;
+    }
+    .badge-hot { background: var(--hot); color: white; animation: hotPulse 1.5s infinite; }
+    @keyframes hotPulse {
+      0%,100% { box-shadow: 0 0 10px rgba(255,69,0,0.5); }
+      50% { box-shadow: 0 0 30px rgba(255,69,0,1); }
+    }
+    .badge-legend { background: var(--legend); color: #000; animation: legendSpin 3s linear infinite; }
+    @keyframes legendSpin {
+      0%,100% { box-shadow: 0 0 15px rgba(255,215,0,0.5); }
+      50% { box-shadow: 0 0 40px rgba(255,215,0,1); }
+    }
+
+    .icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      display: block;
+      animation: floatIcon 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px rgba(0,255,234,0.4));
+    }
+    @keyframes floatIcon {
+      0%,100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-12px) rotate(2deg); }
+    }
+
+    /* ─── SLIDER ─── */
     .slider-container {
       position: relative;
       max-width: 1000px;
       margin: 0 auto 50px;
       overflow: hidden;
-      border-radius: 20px;
+      border-radius: 16px;
       box-shadow: var(--glow);
-      animation: slideInLeft 1.5s ease-out;
+      border: 1px solid var(--border);
     }
-
-    @keyframes slideInLeft {
-      from { transform: translateX(-100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    .slider {
-      display: flex;
-      transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
+    .slider { display: flex; transition: transform 0.9s cubic-bezier(0.68,-0.55,0.265,1.55); }
     .slide {
       min-width: 100%;
-      height: 350px;
+      height: 340px;
       background-size: cover;
       background-position: center;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 2.2rem;
+      font-size: 2rem;
       text-shadow: 0 0 15px black;
-      animation: zoomIn 5s infinite alternate;
+      overflow: hidden;
+      position: relative;
     }
-
-    @keyframes zoomIn {
-      from { transform: scale(1); }
-      to { transform: scale(1.1); }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,40,0.4));
     }
-
     .slide-text {
       text-align: center;
-      padding: 30px;
-      background: rgba(0,0,0,0.6);
-      border-radius: 15px;
+      padding: 28px 40px;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(0,255,234,0.3);
+      border-radius: 12px;
       max-width: 80%;
-      animation: fadeInUp 1s ease-out;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(8px);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.4rem;
     }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     .slider-btn {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.6);
       color: white;
-      border: none;
-      font-size: 3rem;
-      padding: 10px 20px;
+      border: 1px solid rgba(0,255,234,0.3);
+      font-size: 2.5rem;
+      width: 52px; height: 52px;
+      display: flex; align-items: center; justify-content: center;
       cursor: pointer;
       border-radius: 50%;
       transition: all 0.3s;
-      animation: arrowBounce 1.5s infinite;
+      backdrop-filter: blur(10px);
     }
-
-    @keyframes arrowBounce {
-      0%, 100% { transform: translateY(-50%); }
-      50% { transform: translateY(-60%); }
+    .slider-btn:hover { background: rgba(0,255,234,0.3); transform: translateY(-50%) scale(1.15); }
+    .prev { left: 18px; }
+    .next { right: 18px; }
+    .slider-dots {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 5;
     }
-
-    .slider-btn:hover { background: rgba(0,255,234,0.7); }
-    .prev { left: 20px; }
-    .next { right: 20px; }
-
-    .store-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 30px;
-      margin-bottom: 60px;
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      cursor: pointer;
+      transition: all 0.3s;
     }
+    .dot.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); width: 24px; border-radius: 4px; }
 
-    .card {
-      background: var(--card);
-      backdrop-filter: blur(15px);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 30px;
-      text-align: center;
-      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      opacity: 0;
-      transform: translateY(40px) rotate(-5deg);
-      box-shadow: var(--glow);
-    }
-
-    .card.visible { opacity: 1; transform: translateY(0) rotate(0); }
-
-    .card:hover { transform: translateY(-15px) rotate(0) scale(1.05); box-shadow: 0 0 50px var(--accent); }
-
-    .card h3 { font-size: 2.2rem; color: var(--accent); margin-bottom: 15px; animation: textGlow 2s infinite alternate; }
-
-    @keyframes textGlow {
-      from { text-shadow: 0 0 5px var(--accent); }
-      to { text-shadow: 0 0 20px var(--accent); }
-    }
-
-    .card .price, .free-tag { font-size: 2rem; color: var(--accent2); font-weight: bold; margin: 15px 0; }
-
-    .free-tag { color: #00ff88; }
-
-    .icon { font-size: 4rem; margin-bottom: 20px; animation: bounceIcon 1.5s infinite; display: block; }
-
-    @keyframes bounceIcon {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-
+    /* ─── FOOTER ─── */
     footer {
+      position: relative;
+      z-index: 10;
       text-align: center;
       padding: 50px 20px;
-      opacity: 0.8;
-      animation: fadeIn 2s ease-in;
+      opacity: 0.7;
+      font-size: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    footer::after { content: ' ❤️ Built by jano'; }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    footer::after { content: ' ❤️ Built by jano'; font-size: 1rem; }
+    /* ─── MINI-GAME MODAL ─── */
+    #game-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+    }
+    #game-modal.open { display: flex; animation: modalFadeIn 0.4s ease; }
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .game-box {
+      background: #08001a;
+      border: 1px solid var(--accent);
+      border-radius: 20px;
+      padding: 36px 40px;
+      text-align: center;
+      max-width: 500px;
+      width: 95%;
+      box-shadow: 0 0 80px rgba(0,255,234,0.3), 0 0 40px rgba(191,0,255,0.2);
+      animation: gameBoxIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+      position: relative;
+    }
+    @keyframes gameBoxIn {
+      from { transform: scale(0.6) translateY(40px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .game-box h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .game-box h2::before, .game-box h2::after { content: none; }
+    .game-box h2 .underline-bar { display: none; }
+    #game-subtitle {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+
+    /* WHACK-A-CREEPER GAME */
+    #game-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .hole {
+      background: rgba(0,255,234,0.07);
+      border: 1px solid rgba(0,255,234,0.2);
+      border-radius: 12px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s;
+      user-select: none;
+    }
+    .hole:hover { background: rgba(0,255,234,0.12); }
+    .hole .mob {
+      position: absolute;
+      bottom: -100%;
+      transition: bottom 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      font-size: 2.2rem;
+      line-height: 1;
+      filter: drop-shadow(0 0 8px rgba(0,255,100,0.7));
+    }
+    .hole.active .mob { bottom: 8px; }
+    .hole.whacked .mob { bottom: -100%; filter: drop-shadow(0 0 20px red); }
+    .hole.whacked { background: rgba(255,50,50,0.2); animation: whackFlash 0.3s ease; }
+    @keyframes whackFlash {
+      0% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .game-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+    }
+    .game-hud .stat { color: rgba(255,255,255,0.6); }
+    .game-hud .val { color: var(--accent); font-size: 1.2rem; font-weight: 700; }
+    #timer-bar-wrap {
+      height: 5px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    #timer-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    #game-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+    }
+    #game-overlay h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+      margin-bottom: 10px;
+    }
+    #game-overlay p { color: rgba(255,255,255,0.6); margin-bottom: 20px; font-size: 1rem; }
+    #game-overlay .score-big {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      color: var(--accent);
+      text-shadow: 0 0 30px var(--accent);
+      margin: 8px 0 20px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 14px; right: 18px;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.4);
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: color 0.2s;
+      z-index: 10;
+      line-height: 1;
+    }
+    .close-btn:hover { color: var(--accent2); }
+
+    /* SCORE POP */
+    .score-pop {
+      position: fixed;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      color: #44ff88;
+      font-weight: 700;
+      pointer-events: none;
+      z-index: 99999;
+      animation: scoreFly 0.8s ease forwards;
+      text-shadow: 0 0 20px rgba(68,255,136,0.8);
+    }
+    @keyframes scoreFly {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-80px) scale(1.5); }
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      #game-grid { grid-template-columns: repeat(3, 1fr); }
+      .hole { height: 70px; }
+    }
   </style>
 </head>
 <body>
 
+  <div id="cursor"></div>
+  <div id="cursor-trail"></div>
   <div id="particles-js"></div>
-
   <div class="theme-toggle" id="themeToggle">🌙</div>
 
+  <!-- MINI GAME MODAL -->
+  <div id="game-modal">
+    <div class="game-box">
+      <button class="close-btn" onclick="closeGame()">✕</button>
+      <h2>Whack-A-Creeper! 💥</h2>
+      <p id="game-subtitle">Hit creepers before they disappear!</p>
+
+      <div class="game-hud">
+        <div><span class="stat">SCORE </span><span class="val" id="score-display">0</span></div>
+        <div><span class="stat">BEST </span><span class="val" id="best-display">0</span></div>
+        <div><span class="stat">TIME </span><span class="val" id="time-display">30</span></div>
+      </div>
+      <div id="timer-bar-wrap"><div id="timer-bar" style="width:100%"></div></div>
+
+      <div id="game-grid">
+        <!-- holes injected by JS -->
+      </div>
+
+      <div id="game-overlay">
+        <h3 id="overlay-title">WHACK-A-CREEPER</h3>
+        <p id="overlay-desc">Click creepers to score points. Watch out for endermen — clicking them loses points!</p>
+        <div class="score-big" id="final-score" style="display:none"></div>
+        <button class="btn" onclick="startGame()"><span>▶ START GAME</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
   <header>
     <div class="container">
-      <h1>OuraSmp</h1>
-      <p>Ranks & Crate Keys • IP: <b id="serverIp" title="Click to copy">ourasmp.mcsh.io</b>
-        <span id="copyToast" style="display:none; margin-left:10px; color:var(--accent);">Copied! 🎉</span>
-      </p>
-      <p>Join our Discord for purchases, applications, and more! 🔗</p>
+      <div class="hero-badge">⚡ OURASMP MINECRAFT SERVER ⚡</div>
+      <h1 data-text="OuraSmp">OuraSmp</h1>
+      <p class="header-sub">Ranks • Crate Keys • IP:</p>
+      <b id="serverIp" title="Click to copy">ourasmp.mcsh.io</b>
+      <span id="copyToast">Copied! 🎉</span>
+      <p style="color:rgba(255,255,255,0.5); font-size:0.9rem; margin-bottom:24px;">Join our Discord for purchases, applications, and more! 🔗</p>
 
-      <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Join Discord 📱</a>
-      <a href="#shop" class="btn">View Shop 🛒</a>
-      <a href="#staff" class="btn">Staff / Media Apply 👥</a>
+      <div class="btn-row">
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn btn-discord"><span>Join Discord 📱</span></a>
+        <a href="#shop" class="btn"><span>View Shop 🛒</span></a>
+        <a href="#staff" class="btn"><span>Staff / Media Apply 👥</span></a>
+        <button class="btn btn-game" onclick="openGame()"><span>🎮 Play Mini-Game</span></button>
+      </div>
     </div>
   </header>
 
-  <!-- Shop Section -->
+  <!-- SHOP -->
   <section id="shop" class="container">
-    <h2>Shop - Ranks & Keys</h2>
+    <h2>Shop — Ranks &amp; Keys<span class="underline-bar"></span></h2>
     <div class="store-grid">
       <div class="card">
         <span class="icon">🦸</span>
         <h3>Hero Rank</h3>
         <p>Basic perks, extra homes, /nick & more! 🏠</p>
         <div class="price">2 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Contact Staff 📞</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
       </div>
-
       <div class="card">
         <span class="icon">🔑</span>
         <h3>Prime Crate Key</h3>
         <p>Unlock premium crate with epic rewards! 🎁</p>
         <div class="price">3 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Contact Staff 📞</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
       </div>
-
       <div class="card">
         <span class="icon">🦈</span>
         <h3>Leviathan Rank</h3>
         <p>Advanced perks, fly, particles & keys 🕊️</p>
         <div class="price">5 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Contact Staff 📞</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
       </div>
-
       <div class="card">
         <span class="icon">🗿</span>
         <h3>Titan Rank</h3>
-        <div style="background:#ff4500; color:white; padding:6px 12px; border-radius:20px; display:inline-block; margin:10px 0;">HOT 🔥</div>
+        <div class="badge badge-hot">HOT 🔥</div>
         <p>Godly features, custom tags, priority ⚡</p>
         <div class="price">9 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Contact Staff 📞</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
       </div>
-
       <div class="card">
         <span class="icon">✨</span>
         <h3>Mystic Rank</h3>
         <p>Magic trails, more keys, exclusive cosmetics 🌟</p>
         <div class="price">11 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Contact Staff 📞</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
       </div>
-
       <div class="card">
         <span class="icon">🐍</span>
         <h3>Cobra Rank</h3>
         <p>Elite perks, venom effects, lifetime benefits 🐍</p>
         <div class="price">15 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Contact Staff 📞</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
       </div>
-
       <div class="card">
         <span class="icon">🐉</span>
         <h3>Dragon Rank</h3>
-        <div style="background:#ffd700; color:black; padding:6px 12px; border-radius:20px; display:inline-block; margin:10px 0;">LEGEND 🏆</div>
+        <div class="badge badge-legend">LEGEND 🏆</div>
         <p>Ultimate power, dragon wings, max keys & more 🔥</p>
         <div class="price">20 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Contact Staff 📞</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
       </div>
-
       <div class="card">
         <span class="icon">🎨</span>
         <h3>Custom Rank</h3>
         <p>Personalized tag, color, perks – your choice! 🖌️</p>
         <div class="price">15 gel</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Contact Staff 📞</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Contact Staff 📞</span></a>
       </div>
     </div>
   </section>
 
-  <!-- Staff Section -->
+  <!-- STAFF -->
   <section id="staff" class="container">
-    <h2>Staff & Media Team (Apply for FREE!)</h2>
+    <h2>Staff &amp; Media Team (FREE!)<span class="underline-bar"></span></h2>
 
     <div class="slider-container">
       <div class="slider" id="slider">
         <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1585208798174-6cedd78e0198?w=1200');">
-          <div class="slide-text">Become Media 🎥<br>Create content & get perks!</div>
+          <div class="slide-text">Become Media 🎥<br><small style="font-size:0.8rem;opacity:0.8">Create content & get perks!</small></div>
         </div>
         <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=1200');">
-          <div class="slide-text">Media + Mod 📹🔨<br>Content + moderation</div>
+          <div class="slide-text">Media + Mod 📹🔨<br><small style="font-size:0.8rem;opacity:0.8">Content + moderation</small></div>
         </div>
         <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200');">
-          <div class="slide-text">Sr Mod 🛡️<br>Senior trusted staff</div>
+          <div class="slide-text">Sr Mod 🛡️<br><small style="font-size:0.8rem;opacity:0.8">Senior trusted staff</small></div>
         </div>
         <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=1200');">
-          <div class="slide-text">Admin 👑<br>Full server power</div>
+          <div class="slide-text">Admin 👑<br><small style="font-size:0.8rem;opacity:0.8">Full server power</small></div>
         </div>
       </div>
       <button class="slider-btn prev" onclick="prevSlide()">‹</button>
       <button class="slider-btn next" onclick="nextSlide()">›</button>
+      <div class="slider-dots" id="slider-dots"></div>
     </div>
 
     <div class="store-grid">
@@ -430,31 +864,28 @@
         <h3>Media</h3>
         <p>Create videos, streams, posts – special role & recognition 📸</p>
         <div class="free-tag">FREE 💸</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Apply / Join Media Staff 👏</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Apply / Join Media Staff 👏</span></a>
       </div>
-
       <div class="card">
         <span class="icon">🎥🔨</span>
         <h3>Media + Mod</h3>
         <p>Media perks + basic moderation tools ⚙️</p>
         <div class="free-tag">FREE 💸</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Apply / Join Media Staff 👏</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Apply / Join Media Staff 👏</span></a>
       </div>
-
       <div class="card">
         <span class="icon">🛡️</span>
         <h3>Sr Mod</h3>
         <p>Senior Moderator – advanced commands & trust 🔒</p>
         <div class="free-tag">FREE 💸</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Apply / Join Sr Mod 👏</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Apply / Join Sr Mod 👏</span></a>
       </div>
-
       <div class="card">
         <span class="icon">👑</span>
         <h3>Admin</h3>
         <p>Full admin – manage plugins, players, server 🌐</p>
         <div class="free-tag">FREE 💸</div>
-        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn">Apply / Join Admin 👏</a>
+        <a href="https://discord.gg/K3ETRwzV" target="_blank" rel="noopener noreferrer" class="btn"><span>Apply / Join Admin 👏</span></a>
       </div>
     </div>
   </section>
@@ -464,72 +895,253 @@
   </footer>
 
   <script>
-    // Theme toggle
+    /* ─── CURSOR ─── */
+    const cursor = document.getElementById('cursor');
+    const trail = document.getElementById('cursor-trail');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      trail.style.left = e.clientX + 'px';
+      trail.style.top = e.clientY + 'px';
+    });
+    document.addEventListener('mousedown', () => cursor.style.transform = 'translate(-50%,-50%) scale(0.6)');
+    document.addEventListener('mouseup', () => cursor.style.transform = 'translate(-50%,-50%) scale(1)');
+
+    /* ─── THEME ─── */
     const toggle = document.getElementById('themeToggle');
     const html = document.documentElement;
-
-    function setTheme(theme) {
-      html.setAttribute('data-theme', theme);
-      toggle.textContent = theme === 'dark' ? '🌙' : '☀️';
-      localStorage.setItem('theme', theme);
+    function setTheme(t) {
+      html.setAttribute('data-theme', t);
+      toggle.textContent = t === 'dark' ? '🌙' : '☀️';
+      localStorage.setItem('theme', t);
     }
+    setTheme(localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    toggle.addEventListener('click', () => setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
 
-    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    setTheme(savedTheme);
-
-    toggle.addEventListener('click', () => {
-      const current = html.getAttribute('data-theme');
-      setTheme(current === 'dark' ? 'light' : 'dark');
-    });
-
-    // Particles (enhanced with more colors and movement)
+    /* ─── PARTICLES ─── */
     tsParticles.load("particles-js", {
+      background: { color: "transparent" },
       particles: {
-        number: { value: 60 },
-        color: { value: ["#00ffea", "#ff00aa", "#ffd700", "#ff4500"] },
-        shape: { type: "polygon", polygon: { nb_sides: 5 } },
-        opacity: { value: 0.6, random: true },
-        size: { value: 8, random: true },
-        move: { enable: true, speed: 3, direction: "none", random: true, attract: { enable: true, rotateX: 600, rotateY: 1200 } }
+        number: { value: 55 },
+        color: { value: ["#00ffea", "#ff00aa", "#bf00ff", "#ffd700"] },
+        shape: { type: ["circle","triangle"] },
+        opacity: { value: 0.5, random: true },
+        size: { value: { min: 1, max: 5 } },
+        move: { enable: true, speed: 1.2, direction: "none", random: true, out_mode: "bounce" },
+        links: { enable: true, color: "#00ffea", opacity: 0.07, distance: 130 }
       },
-      interactivity: { events: { onhover: { enable: true, mode: "bubble" }, onclick: { enable: true, mode: "push" } }, modes: { bubble: { size: 15, opacity: 1 } } }
+      interactivity: {
+        events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" } },
+        modes: { repulse: { distance: 80 }, push: { particles_nb: 3 } }
+      }
     });
 
-    // IP copy with emoji feedback
+    /* ─── IP COPY ─── */
     document.getElementById('serverIp').addEventListener('click', () => {
       navigator.clipboard.writeText('ourasmp.mcsh.io');
-      document.getElementById('copyToast').style.display = 'inline';
-      setTimeout(() => document.getElementById('copyToast').style.display = 'none', 2500);
+      const t = document.getElementById('copyToast');
+      t.style.display = 'inline';
+      setTimeout(() => t.style.display = 'none', 2500);
     });
 
-    // Scroll reveal with stagger
-    const cards = document.querySelectorAll('.card');
+    /* ─── SCROLL REVEAL ─── */
     const observer = new IntersectionObserver(entries => {
-      entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => entry.target.classList.add('visible'), index * 200);
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          const cards = e.target.parentElement.querySelectorAll('.card:not(.visible)');
+          cards.forEach((c, idx) => setTimeout(() => c.classList.add('visible'), idx * 120));
+          observer.unobserve(e.target);
         }
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.store-grid').forEach(g => observer.observe(g));
 
-    cards.forEach(card => observer.observe(card));
-
-    // Slider
+    /* ─── SLIDER ─── */
     let currentSlide = 0;
     const slider = document.getElementById('slider');
     const totalSlides = slider.children.length;
-
-    function showSlide(index) {
-      if (index >= totalSlides) index = 0;
-      if (index < 0) index = totalSlides - 1;
-      currentSlide = index;
-      slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+    const dotsContainer = document.getElementById('slider-dots');
+    const dots = [];
+    for (let i = 0; i < totalSlides; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => showSlide(i);
+      dotsContainer.appendChild(d);
+      dots.push(d);
     }
-
+    function showSlide(i) {
+      currentSlide = (i + totalSlides) % totalSlides;
+      slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+      dots.forEach((d, idx) => d.classList.toggle('active', idx === currentSlide));
+    }
     function nextSlide() { showSlide(currentSlide + 1); }
     function prevSlide() { showSlide(currentSlide - 1); }
+    setInterval(nextSlide, 5000);
 
-    setInterval(nextSlide, 5000); // Faster auto-slide for energy
+    /* ═══════════════════════════════════════
+       WHACK-A-CREEPER MINI GAME
+    ═══════════════════════════════════════ */
+    const GAME_DURATION = 30;
+    const MOBS = ['🐲','🐲','🐲','🐲','🐲','🐲','💀','👾']; // mostly creepers, some bad ones
+    const CREEPER = '🐲';
+    const BAD = ['💀','👾'];
+    const COLS = 4;
+    const ROWS = 3;
+    const TOTAL_HOLES = COLS * ROWS;
+
+    let score = 0, bestScore = 0, gameActive = false;
+    let timeLeft = GAME_DURATION;
+    let timerInterval, mobInterval;
+    let activeHoles = new Set();
+
+    const gameGrid = document.getElementById('game-grid');
+    const scoreDisplay = document.getElementById('score-display');
+    const bestDisplay = document.getElementById('best-display');
+    const timeDisplay = document.getElementById('time-display');
+    const timerBar = document.getElementById('timer-bar');
+    const gameOverlay = document.getElementById('game-overlay');
+    const overlayTitle = document.getElementById('overlay-title');
+    const overlayDesc = document.getElementById('overlay-desc');
+    const finalScore = document.getElementById('final-score');
+
+    // Build grid
+    for (let i = 0; i < TOTAL_HOLES; i++) {
+      const hole = document.createElement('div');
+      hole.className = 'hole';
+      hole.dataset.index = i;
+      const mob = document.createElement('span');
+      mob.className = 'mob';
+      hole.appendChild(mob);
+      hole.addEventListener('click', () => whack(hole, mob));
+      gameGrid.appendChild(hole);
+    }
+
+    function openGame() {
+      document.getElementById('game-modal').classList.add('open');
+    }
+    function closeGame() {
+      document.getElementById('game-modal').classList.remove('open');
+      stopGame();
+    }
+
+    function startGame() {
+      score = 0;
+      timeLeft = GAME_DURATION;
+      gameActive = true;
+      activeHoles.clear();
+      scoreDisplay.textContent = '0';
+      timeDisplay.textContent = GAME_DURATION;
+      timerBar.style.width = '100%';
+      gameOverlay.style.display = 'none';
+      finalScore.style.display = 'none';
+
+      // Clear all holes
+      document.querySelectorAll('.hole').forEach(h => {
+        h.classList.remove('active','whacked');
+      });
+
+      // Timer countdown
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timeDisplay.textContent = timeLeft;
+        timerBar.style.width = (timeLeft / GAME_DURATION * 100) + '%';
+        if (timeLeft <= 0) endGame();
+      }, 1000);
+
+      // Spawn mobs — get faster over time
+      spawnMob();
+    }
+
+    function spawnMob() {
+      if (!gameActive) return;
+      const holes = document.querySelectorAll('.hole');
+      // pick a random hole not already active
+      let available = [...holes].filter(h => !h.classList.contains('active'));
+      if (available.length === 0) { setTimeout(spawnMob, 300); return; }
+
+      const hole = available[Math.floor(Math.random() * available.length)];
+      const mob = hole.querySelector('.mob');
+      const mobType = MOBS[Math.floor(Math.random() * MOBS.length)];
+      mob.textContent = mobType;
+      mob.dataset.type = mobType;
+      hole.classList.add('active');
+
+      // How long it stays — gets shorter as time runs out
+      const stayTime = Math.max(600, 1400 - ((GAME_DURATION - timeLeft) * 20));
+
+      const hideTimer = setTimeout(() => {
+        if (hole.classList.contains('active')) {
+          hole.classList.remove('active');
+        }
+        // spawn next
+        const nextDelay = Math.max(200, 700 - ((GAME_DURATION - timeLeft) * 10));
+        setTimeout(spawnMob, nextDelay);
+      }, stayTime);
+
+      hole.dataset.hideTimer = hideTimer;
+    }
+
+    function whack(hole, mob) {
+      if (!gameActive || !hole.classList.contains('active')) return;
+      clearTimeout(parseInt(hole.dataset.hideTimer));
+      const type = mob.dataset.type;
+      hole.classList.remove('active');
+      hole.classList.add('whacked');
+
+      if (BAD.includes(type)) {
+        score = Math.max(0, score - 3);
+        spawnScorePop('-3', hole, '#ff4444');
+        navigator.vibrate && navigator.vibrate(100);
+      } else {
+        const pts = 1;
+        score += pts;
+        spawnScorePop('+1', hole, '#44ff88');
+      }
+      scoreDisplay.textContent = score;
+
+      setTimeout(() => hole.classList.remove('whacked'), 350);
+      // spawn next mob quickly
+      const nextDelay = Math.max(150, 500 - ((GAME_DURATION - timeLeft) * 8));
+      setTimeout(spawnMob, nextDelay);
+    }
+
+    function spawnScorePop(text, hole, color) {
+      const rect = hole.getBoundingClientRect();
+      const pop = document.createElement('div');
+      pop.className = 'score-pop';
+      pop.textContent = text;
+      pop.style.left = (rect.left + rect.width/2) + 'px';
+      pop.style.top = (rect.top) + 'px';
+      pop.style.color = color;
+      document.body.appendChild(pop);
+      setTimeout(() => pop.remove(), 800);
+    }
+
+    function endGame() {
+      gameActive = false;
+      clearInterval(timerInterval);
+      clearTimeout(mobInterval);
+
+      document.querySelectorAll('.hole').forEach(h => h.classList.remove('active'));
+
+      if (score > bestScore) bestScore = score;
+      bestDisplay.textContent = bestScore;
+
+      // Show overlay
+      overlayTitle.textContent = score >= 15 ? '🏆 LEGENDARY!' : score >= 8 ? '⚡ NICE RUN!' : '💀 GAME OVER';
+      overlayDesc.textContent = score >= 15 ? 'You\'re a Minecraft pro!' : score >= 8 ? 'Not bad, try to beat your score!' : 'Creepers survived... try again!';
+      finalScore.textContent = score;
+      finalScore.style.display = 'block';
+      document.querySelector('#game-overlay button span').textContent = '↺ PLAY AGAIN';
+      gameOverlay.style.display = 'flex';
+    }
+
+    function stopGame() {
+      gameActive = false;
+      clearInterval(timerInterval);
+      clearTimeout(mobInterval);
+      document.querySelectorAll('.hole').forEach(h => h.classList.remove('active','whacked'));
+    }
   </script>
 </body>
 </html>
